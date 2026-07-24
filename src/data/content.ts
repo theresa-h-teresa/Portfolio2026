@@ -16,7 +16,7 @@ export const hero = {
     github: 'https://github.gatech.edu/zfang327',
     linkedin: 'https://www.linkedin.com/in/teresa-fang-5b2926284/',
   },
-  resumeHref: '/Resume.pdf',
+  resumeHref: '/Fang_Resume_PM.pdf',
 }
 
 export type SkillPill = string
