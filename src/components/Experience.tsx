@@ -4,8 +4,13 @@ import { SkillPill } from './SkillPill'
 import { withBase } from '../lib/url'
 
 function ExperienceCard({ item }: { item: ExperienceItem }) {
+  const Wrapper = item.href ? 'a' : 'article'
+
   return (
-    <article className="group rounded-[10px] p-6 transition-colors duration-200 hover:bg-highlight-bg">
+    <Wrapper
+      {...(item.href ? { href: item.href, target: '_blank', rel: 'noreferrer' } : {})}
+      className={`group block rounded-[10px] p-6 transition-colors duration-200 hover:bg-highlight-bg ${item.href ? 'cursor-pointer' : ''}`}
+    >
       <h3 className="font-display text-base font-medium text-ink transition-colors duration-200 group-hover:text-accent">
         {item.role} • {item.org}
       </h3>
@@ -16,7 +21,7 @@ function ExperienceCard({ item }: { item: ExperienceItem }) {
           <SkillPill key={`${s}-${i}`} label={s} />
         ))}
       </div>
-    </article>
+    </Wrapper>
   )
 }
 

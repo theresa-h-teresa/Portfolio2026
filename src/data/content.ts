@@ -27,6 +27,7 @@ export interface ExperienceItem {
   date: string
   description: string
   skills: SkillPill[]
+  href?: string
 }
 
 export const experience: ExperienceItem[] = [
@@ -48,6 +49,7 @@ export const experience: ExperienceItem[] = [
       'Javascript',
       'WordPress',
     ],
+    href: 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool/tree/summer26',
   },
   {
     role: 'Product Research Collaborator',

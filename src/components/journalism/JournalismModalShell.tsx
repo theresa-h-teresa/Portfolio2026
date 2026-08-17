@@ -59,7 +59,7 @@ export function JournalismModalShell({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="shrink-0 font-sans text-2xl text-white transition-opacity hover:opacity-70"
+            className="shrink-0 cursor-pointer font-sans text-2xl text-white transition-opacity hover:opacity-70"
           >
             [ x ]
           </button>
@@ -77,7 +77,7 @@ export function JournalismModalShell({
                         <button
                           type="button"
                           onClick={() => goTo(item.id)}
-                          className="text-left font-mono text-sm text-ink hover:underline underline-offset-2"
+                          className="cursor-pointer text-left font-mono text-sm text-ink hover:underline underline-offset-2"
                         >
                           {item.label}
                         </button>
