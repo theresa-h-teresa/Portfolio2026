@@ -71,6 +71,7 @@ export const workSamples: WorkSample[] = [
     outlet: 'C-SPAN',
     date: 'StudentCam 2023 First Prize',
     category: 'Short Documentary',
+    image: '/journalism/Sample_MoneyTalks.jpg',
     href: 'https://www.studentcam.org/2023-first-prize-high-school-east-money-talks-inside-the-inflation-surge-by-teresa-fang/',
   },
   {
@@ -78,6 +79,7 @@ export const workSamples: WorkSample[] = [
     outlet: 'C-SPAN',
     date: 'StudentCam 2021 Second Prize',
     category: 'Short Documentary',
+    image: '/journalism/Sample_USChina.jpg',
     href: 'https://www.studentcam.org/2021-second-prize-middle-school-us-china-survive-or-thrive/',
   },
 ]

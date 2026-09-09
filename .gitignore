@@ -15,6 +15,9 @@ dist-ssr
 # Unreferenced source screenshots accidentally saved into public/ (not site assets)
 public/Screenshot *.png
 
+# Raw video masters (large, not web-optimized) — compressed .mp4 versions are committed instead
+public/*.mov
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
