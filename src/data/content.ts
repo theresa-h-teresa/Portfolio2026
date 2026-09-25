@@ -15,7 +15,7 @@ export const hero = {
     github: 'https://github.gatech.edu/zfang327',
     linkedin: 'https://www.linkedin.com/in/teresa-fang-5b2926284/',
   },
-  resumeHref: '/Fang_PM%20Resume_Sep24.pdf',
+  resumeHref: '/Fang_Resume_General.pdf',
 }
 
 export type SkillPill = string
@@ -100,7 +100,7 @@ export const projects: ProjectItem[] = [
     title: 'Sound Clouds / ARRAY',
     role: 'Research Assistant | Undergraduate Research at Expressive Machinery Lab',
     description:
-      'Array is a no-code authoring platform for creating interactive audiovisual experiences through movement and spatial interaction. Worked across product, UX, and engineering to prototype computer-vision interactions and build 2D/3D simulation tools for rapid experimentation.',
+      'A no-code authoring platform for creating interactive audiovisual experiences through movement and spatial interaction. Worked across product, UX, and engineering to prototype computer-vision interactions and build 2D/3D simulation tools for rapid experimentation.',
     skills: ['TouchDesigner', 'Unity 2D/3D', 'Figma', 'LoopMidi', 'Ableton', 'Python', 'C/C#', 'Javascript', 'WordPress'],
     thumbnail: '/Thumbnail_Array.png',
     href: 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool',
@@ -109,7 +109,7 @@ export const projects: ProjectItem[] = [
     title: 'Job Mama',
     role: 'Product Designer & UX Researcher | HCI Course Project',
     description:
-      'Co-designed an internship-prep platform for college students, running usability and think-aloud studies to uncover key navigation and workflow challenges. Synthesized findings into 6 prioritized pain points and redesigned core user flows in Figma, sequencing improvements by user impact and feasibility.',
+      'A usability-driven redesign of a job-search platform for working mothers. Conducted 5 think-aloud interviews, identified 6 recurring usability pain points, and redesigned the experience around the findings.',
     skills: ['UX research', 'usability testing', 'user flows', 'information architecture', 'prototyping', 'prioritization', 'Figma'],
     thumbnail: '/Thumbnail_JobMama.png',
     href: 'https://www.figma.com/proto/jf963lMW1c6Yq6zgFdjj5E/CS3751-prototype---poster?node-id=361-554&t=Dqir86uOVZbrjfyX-1&scaling=min-zoom&content-scaling=fixed&page-id=361%3A553&starting-point-node-id=366%3A981',

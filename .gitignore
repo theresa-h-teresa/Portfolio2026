@@ -28,3 +28,6 @@ public/*.mov
 *.njsproj
 *.sln
 *.sw?
+
+# Private resume, not published
+public/Fang_PM Resume_Sep24.pdf
