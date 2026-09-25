@@ -2,7 +2,7 @@ import { JournalismModalShell } from '../JournalismModalShell'
 import { JSection, JP, JLink } from '../JournalismBlocks'
 
 const organizations = [
-  { label: 'The Stentorian', href: 'https://ncssmstentorian.com/author/fang25t/' },
+  { label: 'The Stentorian' },
   { label: 'Scholastic Inc.', href: 'https://kpcnotebook.scholastic.com/author/teresa-fang' },
   { label: 'C-SPAN', href: 'https://www.c-span.org/person/teresa-fang/129523/' },
   {
@@ -72,11 +72,15 @@ export function AboutMeCard({ onClose }: { onClose: () => void }) {
       leftExtra={
         <div className="flex flex-col gap-4 font-mono text-sm">
           <p className="mb-2 font-display text-2xl leading-none text-ink">Profiles</p>
-          {organizations.map((org, i) => (
-            <JLink key={i} href={org.href}>
-              {org.label}
-            </JLink>
-          ))}
+          {organizations.map((org, i) =>
+            org.href ? (
+              <JLink key={i} href={org.href}>
+                {org.label}
+              </JLink>
+            ) : (
+              <span key={i}>{org.label}</span>
+            ),
+          )}
           <JLink href="https://www.c-span.org/person/teresa-fang/129523/">Featured In:</JLink>
           <ul className="flex flex-col gap-2">
             {featuredIn.map((item, i) => (

@@ -115,7 +115,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
         <JP>
           In the same month, after my editorial board and I reviewed the document thoroughly over a series of
           in-person and virtual team meetings, I added these policies in a readable form on the{' '}
-          <JLink href="https://ncssmstentorian.com/have-submissions/">submissions page</JLink> of our newspaper
+          submissions page of our newspaper
           website.
         </JP>
         <JImage src="/journalism/marketing-image-39.png" className="w-full" />
@@ -145,7 +145,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
         <JImage src="/journalism/marketing-image-40.png" className="w-full" />
         <JP>
           In November 2024, I revised our newspaper website and built a new page for{' '}
-          <JLink href="https://ncssmstentorian.com/advertise/">advertising</JLink> in order to increase accessibility
+          advertising in order to increase accessibility
           for sponsors to indicate their interest in collaborating with us.
         </JP>
       </JSection>

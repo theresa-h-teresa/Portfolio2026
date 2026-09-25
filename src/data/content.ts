@@ -7,16 +7,15 @@ export const sections = [
 
 export const hero = {
   name: 'Teresa Fang',
-  title: 'Product Management',
   tagline:
-    'I design systems that put users first when spaces between community and computing converge.',
+    'I build human-centered products and systems at the intersection of technology, creativity, and community.',
   tags: ['product-builder', 'human-centered AI', 'user research'],
   socials: {
     mail: 'mailto:teresafangtzf@gmail.com',
     github: 'https://github.gatech.edu/zfang327',
     linkedin: 'https://www.linkedin.com/in/teresa-fang-5b2926284/',
   },
-  resumeHref: '/Fang_Resume_PM.pdf',
+  resumeHref: '/Fang_PM%20Resume_Sep24.pdf',
 }
 
 export type SkillPill = string
@@ -36,7 +35,7 @@ export const experience: ExperienceItem[] = [
     org: 'Expressive Machinery Lab',
     date: 'Sep 25 — Present',
     description:
-      'Led product and UX design for a no-code authoring platform that enables non-technical users to create interactive audiovisual experiences, translating user and stakeholder research into product requirements and roadmap priorities. Prototyped and evaluated AI-driven interaction models using computer vision, spatial interaction, and real-time media, iterating through user feedback and public demonstrations.',
+      'Led product and UX design for a no-code authoring platform enabling non-technical users to create interactive audiovisual experiences, translating user and stakeholder research into product requirements and roadmap priorities. Designed, prototyped, and implemented interactive systems using computer vision, spatial interaction, and real-time media, iterating through user testing and public demonstrations.',
     skills: [
       'TouchDesigner',
       'Unity 2D/3D',
@@ -45,7 +44,6 @@ export const experience: ExperienceItem[] = [
       'Ableton',
       'Python',
       'C/C#',
-      'Python',
       'Javascript',
       'WordPress',
     ],
@@ -64,7 +62,7 @@ export const experience: ExperienceItem[] = [
     org: 'Georgia Tech Grand Challenges',
     date: 'Aug 2025 — May 2026',
     description:
-      'Led product discovery for a sustainable soil-remediation solution addressing lead contamination, conducting 11 customer interviews and research with 24 community, academic, and legal stakeholders to identify adoption barriers and shape product strategy. Developed implementation and commercialization roadmaps focused on scalability and adoption, aligning technical and business workstreams around product priorities.',
+      'Led product discovery for a sustainable soil-remediation solution addressing lead contamination, conducting 11 customer interviews and engaging 24 community, academic, and legal stakeholders to identify adoption barriers and shape product strategy. Developed implementation and commercialization roadmaps focused on scalability and adoption, aligning technical and business workstreams around product priorities.',
     skills: ['Figma', 'Adobe Premiere', 'Adobe Illustrator', 'roadmapping', 'stakeholder interviews', 'product discovery', 'strategy'],
   },
 ]
@@ -102,8 +100,8 @@ export const projects: ProjectItem[] = [
     title: 'Sound Clouds / ARRAY',
     role: 'Research Assistant | Undergraduate Research at Expressive Machinery Lab',
     description:
-      'ARRAY is also an ambient intelligence system designed to elicit deep human experience of awe, wonder, and beauty. For one year and summer, my role in this project was to translate evaluations through designing and storyboarding interactions then program backend functions and interactivity.',
-    skills: ['TouchDesigner', 'Unity 2D/3D', 'Figma', 'LoopMidi', 'Ableton', 'Python', 'C/C#', 'Python', 'Javascript', 'WordPress'],
+      'Array is a no-code authoring platform for creating interactive audiovisual experiences through movement and spatial interaction. Worked across product, UX, and engineering to prototype computer-vision interactions and build 2D/3D simulation tools for rapid experimentation.',
+    skills: ['TouchDesigner', 'Unity 2D/3D', 'Figma', 'LoopMidi', 'Ableton', 'Python', 'C/C#', 'Javascript', 'WordPress'],
     thumbnail: '/Thumbnail_Array.png',
     href: 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool',
   },
@@ -120,7 +118,7 @@ export const projects: ProjectItem[] = [
     title: 'Franky',
     role: 'Founder & Product Lead | Independent Product Venture',
     description:
-      'Defined the product vision for a hardware-software system helping students with ADHD improve task initiation through physical interaction and structured focus sessions. Drove 0→1 discovery: interviewed 8 students, developed 3 personas, and evaluated 2 prototype concepts to define MVP requirements and a product roadmap across physical and digital touchpoints.',
+      'A physical-digital focus companion that turns everyday tasks into quests for middle school students with ADHD. Led the product from early discovery through MVP, interviewing 8 students, developing 3 personas, and testing 2 product concepts. Drove 0→1 discovery to define MVP requirements and a product roadmap across physical and digital touchpoints.',
     skills: ['product strategy & discovery', 'MVP definition', 'customer interviews', 'prototyping', 'roadmapping'],
     thumbnail: '/Thumbnail_Franky.png',
   },

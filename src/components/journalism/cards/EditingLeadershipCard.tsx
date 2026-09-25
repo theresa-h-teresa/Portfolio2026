@@ -167,9 +167,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           ('20) and current President of The Harvard Crimson, Sellers Hill, and went to tour The Crimson's office on
           Plympton Street at Harvard University. Not only did this opportunity serve as a chat over coffee about
           newspaper operations and business models, but also to interview{' '}
-          <JLink href="https://ncssmstentorian.com/2024/05/24/how-to-newspaper-from-high-school-to-college-with-sellers-hill-20/">
-            Sellers for my feature story
-          </JLink>{' '}
+          Sellers for my feature story{' '}
           on tips on how to be a student journalist in college. To this day, I still use the special edition and
           normal edition of The Crimson that Sellers gave me as inspo for The Stentorian's modern editorial
           layout/spread.

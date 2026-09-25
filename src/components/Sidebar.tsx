@@ -21,12 +21,9 @@ export function Sidebar() {
           <span className="font-mono text-xs text-ink">OPEN FOR WORK</span>
         </div>
 
-        <div>
-          <h1 className="font-display text-4xl leading-[0.9] font-black text-ink md:text-6xl">
-            {hero.name}
-          </h1>
-          <p className="mt-2 font-display text-2xl text-ink md:text-4xl">{hero.title}</p>
-        </div>
+        <h1 className="font-display text-4xl leading-[0.9] font-black text-ink md:text-6xl">
+          {hero.name}
+        </h1>
 
         <div className="flex max-w-md items-start gap-8">
           <ArrowRight className="mt-0.5 size-4 shrink-0 text-ink" />

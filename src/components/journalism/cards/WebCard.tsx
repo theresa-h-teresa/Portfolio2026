@@ -1,5 +1,5 @@
 import { JournalismModalShell } from '../JournalismModalShell'
-import { JSection, JP, JImage, JLink } from '../JournalismBlocks'
+import { JSection, JP, JImage } from '../JournalismBlocks'
 
 const navItems = [
   { label: 'Website', id: 'website' },
@@ -19,14 +19,12 @@ export function WebCard({ onClose }: { onClose: () => void }) {
       <JSection id="website" heading="Website">
         <JP>
           The Stentorian is a multimedia news source, with a significant portion{' '}
-          <JLink href="http://ncssmstentorian.com/">online</JLink>—especially since May 2024.
+          online—especially since May 2024.
         </JP>
         <JP>
           The virtual format allows me to incorporate more photographs and videos in my articles, for example, in
           this{' '}
-          <JLink href="https://ncssmstentorian.com/2024/04/16/ncssm-students-ask-questions-for-nasa-astronaut-and-class-of-1997-alumni-christina-koch/">
-            story
-          </JLink>{' '}
+          story{' '}
           about NASA astronaut and NCSSM alum Christina Koch's appearance at school in April 2024. The video I
           reported for and created accompanied a short blurb, including soundbites from our interviews and
           visualizations of my descriptions.
@@ -44,9 +42,7 @@ export function WebCard({ onClose }: { onClose: () => void }) {
         </JP>
         <JP>
           For coverage of more controversial topics such as{' '}
-          <JLink href="https://ncssmstentorian.com/2024/09/20/ncssm-edu-cares-about-everything-but-its-students/">
-            a nonrepresentative school admissions/marketing campaign
-          </JLink>
+          a nonrepresentative school admissions/marketing campaign
           , I take advantage of interactive links to provide evidence for my statements and encourage further
           engagement with issues.
         </JP>

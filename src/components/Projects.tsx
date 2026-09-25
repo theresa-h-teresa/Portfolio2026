@@ -48,7 +48,8 @@ export function Projects() {
   const ActiveCardComponent = openCard ? detailCards[openCard] : null
 
   return (
-    <section id="projects" className="scroll-mt-[92px] flex flex-col gap-6 py-12 md:py-16">
+    <section id="projects" className="scroll-mt-[92px] flex flex-col gap-6 pt-8 pb-12 md:pt-10 md:pb-16">
+      <p className="font-mono text-sm text-ink/60">PROJECTS</p>
       {projects.map((item) => {
         const hasDetailCard = item.title in detailCards
         return (
