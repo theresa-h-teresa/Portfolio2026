@@ -58,20 +58,20 @@ export const experience: ExperienceItem[] = [
     href: 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool/tree/summer26',
   },
   {
-    role: 'Product Research Collaborator',
-    org: 'MIT Media Lab — Center for Constructive Communication',
-    date: 'Summer 2025',
-    description:
-      'Supported early-stage exploration of tools for analyzing large-scale civic dialogue. Contributed to interface concepts and storytelling approaches for communicating complex civic datasets.',
-    skills: ['Figma', 'data analysis', 'machine learning'],
-  },
-  {
     role: 'Product Manager',
     org: 'Georgia Tech Grand Challenges',
     date: 'Aug 2025 — May 2026',
     description:
       'Led product discovery for a sustainable soil-remediation solution addressing lead contamination, conducting 11 customer interviews and engaging 24 community, academic, and legal stakeholders to identify adoption barriers and shape product strategy. Developed implementation and commercialization roadmaps focused on scalability and adoption, aligning technical and business workstreams around product priorities.',
     skills: ['Figma', 'Adobe Premiere', 'Adobe Illustrator', 'roadmapping', 'stakeholder interviews', 'product discovery', 'strategy'],
+  },
+  {
+    role: 'Product Research Collaborator',
+    org: 'MIT Media Lab — Center for Constructive Communication',
+    date: 'Summer 2025',
+    description:
+      'Supported early-stage exploration of tools for analyzing large-scale civic dialogue. Contributed to interface concepts and storytelling approaches for communicating complex civic datasets.',
+    skills: ['Figma', 'data analysis', 'machine learning'],
   },
 ]
 
