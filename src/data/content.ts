@@ -31,6 +31,14 @@ export interface ExperienceItem {
 
 export const experience: ExperienceItem[] = [
   {
+    role: 'Media Relations Associate',
+    org: 'Northwestern University — Office of Global Marketing and Communications',
+    date: 'Sep 2026 — Present',
+    description:
+      'Support university-wide media relations through content creation, media-industry research, journalist contact research, media-list management, and tracking and analysis of media coverage.',
+    skills: ['Media Relations', 'Content Strategy', 'Media Research', 'Data Analysis'],
+  },
+  {
     role: 'Product & UX Research Assistant',
     org: 'Expressive Machinery Lab',
     date: 'Sep 25 — Present',
