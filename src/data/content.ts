@@ -59,7 +59,7 @@ export const experience: ExperienceItem[] = [
   },
   {
     role: 'Product Manager',
-    org: 'Georgia Tech Grand Challenges',
+    org: 'Georgia Institute of Technology — Grand Challenges',
     date: 'Aug 2025 — May 2026',
     description:
       'Led product discovery for a sustainable soil-remediation solution addressing lead contamination, conducting 11 customer interviews and engaging 24 community, academic, and legal stakeholders to identify adoption barriers and shape product strategy. Developed implementation and commercialization roadmaps focused on scalability and adoption, aligning technical and business workstreams around product priorities.',
