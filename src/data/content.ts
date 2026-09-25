@@ -40,8 +40,8 @@ export const experience: ExperienceItem[] = [
   },
   {
     role: 'Product & UX Research Assistant',
-    org: 'Expressive Machinery Lab',
-    date: 'Sep 25 — Present',
+    org: 'Georgia Institute of Technology — Expressive Machinery Lab',
+    date: 'Sep 2025 — Present',
     description:
       'Led product and UX design for a no-code authoring platform enabling non-technical users to create interactive audiovisual experiences, translating user and stakeholder research into product requirements and roadmap priorities. Designed, prototyped, and implemented interactive systems using computer vision, spatial interaction, and real-time media, iterating through user testing and public demonstrations.',
     skills: [
@@ -59,7 +59,7 @@ export const experience: ExperienceItem[] = [
   },
   {
     role: 'Product Research Collaborator',
-    org: 'MIT Media Lab – Center for Constructive Communication',
+    org: 'MIT Media Lab — Center for Constructive Communication',
     date: 'Summer 2025',
     description:
       'Supported early-stage exploration of tools for analyzing large-scale civic dialogue. Contributed to interface concepts and storytelling approaches for communicating complex civic datasets.',
