@@ -1,0 +1,649 @@
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { createPortal } from 'react-dom'
+import { withBase } from '../lib/url'
+import { setTankBroken } from '../lib/tankStore'
+import { BETTA } from '../data/bettaSprite'
+
+// A fish tank banner with three bettas cut out of my painting.
+//
+// - The banner is a window into a larger tank: fish wander through a world wider and
+//   taller than the frame, so they drift in and out of view instead of hitting walls.
+// - Hovering shows an orange ring around the cursor. Clicking drops a pellet of food;
+//   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
+//   uneaten food sinks and dissolves after a while.
+// - Clicking too fast cracks the glass, and then it shatters: the shards fall, the
+//   water floods out across the page (turning the background blue), and the fish swim
+//   free over the whole screen, joined by three orange ASCII bettas (from the ASCII
+//   version of the painting) that only appear once the tank is broken. You can keep
+//   feeding them: click or drag anywhere on the page (outside links and buttons).
+//   "Refill the tank" puts everything back.
+
+const FISH_SRC = withBase('/tank/betta.png')
+const FISH_ASPECT = 408 / 420 // height / width of the cutout
+const MOUTH = { x: 0.002, y: 0.602 } // mouth position in the image (fish faces left)
+
+// The ASCII betta, drawn as monospace text (0.6em wide characters, 1.1em lines).
+const ASCII_ART = BETTA.join('\n')
+const ASCII_COLS = BETTA[0].length
+const ASCII_ROWS = BETTA.length
+const ASCII_CHAR_EM = 0.6
+const ASCII_LINE_EM = 1.1
+const ASCII_ASPECT = (ASCII_ROWS * ASCII_LINE_EM) / (ASCII_COLS * ASCII_CHAR_EM)
+const ASCII_MOUTH = (() => {
+  // Mouth = the snout tip: the leftmost drawn column (the fish faces left).
+  let col = ASCII_COLS
+  let rows: number[] = []
+  BETTA.forEach((row, y) => {
+    const c = row.search(/\S/)
+    if (c < 0) return
+    if (c < col) [col, rows] = [c, [y]]
+    else if (c === col) rows.push(y)
+  })
+  return { x: col / ASCII_COLS, y: (rows.reduce((a, b) => a + b, 0) / rows.length + 0.5) / ASCII_ROWS }
+})()
+const TANK_BLUE = '#a9d2e6'
+const TANK_HEIGHT = 260
+
+const WANDER_SPEED = 38 // px/s
+const CHASE_SPEED = 120
+const FOOD_SINK = 12 // px/s
+const FOOD_LIFE = 12_000 // ms before uneaten food dissolves
+const FOOD_SPACING = 16 // px between pellets when dragging
+const SPAM_WINDOW = 2500 // ms
+const CRACK_AT = 6 // clicks inside the window before the glass starts cracking
+const SHATTER_AT = 12 // ...and before it shatters
+
+interface Fish {
+  x: number // centre, in the current world's coordinates
+  y: number
+  vx: number
+  vy: number
+  width: number
+  face: number // +1 = facing left (as painted), -1 = facing right; eases through 0 when turning
+  tx: number // wander target
+  ty: number
+  phase: number
+  ascii: boolean // ASCII betta: only shown once the tank is broken
+  aspect: number // height / width
+  mouth: { x: number; y: number } // fractions of the sprite (facing left)
+}
+
+interface Food {
+  id: number
+  x: number
+  y: number
+  born: number
+  drift: number
+}
+
+interface Crack {
+  id: number
+  lines: string[] // SVG polyline point lists
+}
+
+interface Shard {
+  id: number
+  clip: string
+  left: number
+  top: number
+  width: number
+  height: number
+  dx: number
+  rot: number
+  delay: number
+}
+
+type Phase = 'intact' | 'shattering' | 'broken'
+
+interface Bounds {
+  minX: number
+  maxX: number
+  minY: number
+  maxY: number
+}
+
+const rand = (a: number, b: number) => a + Math.random() * (b - a)
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
+
+/** The tank world extends well past the visible window on every side. */
+function tankWorld(w: number, h: number): Bounds {
+  return { minX: -0.6 * w, maxX: 1.6 * w, minY: -0.25 * h, maxY: 1.25 * h }
+}
+/** Once free, the fish roam the whole viewport (and a little past it). */
+function screenWorld(): Bounds {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  return { minX: -0.15 * w, maxX: 1.15 * w, minY: 0.05 * h, maxY: 0.95 * h }
+}
+
+function pickTarget(f: Fish, world: Bounds, view: { w: number; h: number }) {
+  // Mostly aim somewhere visible, sometimes off into the unseen part of the tank.
+  const visible = Math.random() < 0.65
+  f.tx = visible ? rand(0.1 * view.w, 0.9 * view.w) : rand(world.minX, world.maxX)
+  f.ty = visible ? rand(0.2 * view.h, 0.8 * view.h) : rand(world.minY, world.maxY)
+}
+
+function mouthOf(f: Fish) {
+  const h = f.width * f.aspect
+  return { x: f.x + (f.mouth.x - 0.5) * f.width * Math.sign(f.face || 1), y: f.y + (f.mouth.y - 0.5) * h }
+}
+
+function fishTransform(f: Fish, reduced: boolean) {
+  const h = f.width * f.aspect
+  const s = f.face
+  // Tilt the head up or down with the swim direction (head is on the left when s > 0).
+  const tilt = clamp(-Math.sign(s || 1) * Math.atan2(f.vy, Math.abs(f.vx) + 8), -0.35, 0.35)
+  // A gentle tail beat: the body flexes a little, faster when swimming fast.
+  const beat = reduced ? 0 : Math.sin(f.phase)
+  const sx = s * (1 + 0.025 * beat)
+  const sy = 1 - 0.02 * beat
+  const skew = reduced ? 0 : 1.6 * beat
+  return `translate(${(f.x - f.width / 2).toFixed(1)}px, ${(f.y - h / 2).toFixed(1)}px) rotate(${tilt.toFixed(3)}rad) skewY(${skew.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`
+}
+
+function makeCrack(x: number, y: number): Crack {
+  const lines: string[] = []
+  const arms = Math.round(rand(4, 7))
+  for (let i = 0; i < arms; i++) {
+    let angle = (i / arms) * Math.PI * 2 + rand(-0.3, 0.3)
+    let px = x
+    let py = y
+    const pts = [`${px.toFixed(1)},${py.toFixed(1)}`]
+    const segs = Math.round(rand(3, 6))
+    for (let k = 0; k < segs; k++) {
+      angle += rand(-0.5, 0.5)
+      const len = rand(8, 22)
+      px += Math.cos(angle) * len
+      py += Math.sin(angle) * len
+      pts.push(`${px.toFixed(1)},${py.toFixed(1)}`)
+    }
+    lines.push(pts.join(' '))
+  }
+  return { id: Math.random(), lines }
+}
+
+/** Break the tank's rectangle into jittered triangles that fall away. */
+function makeShards(rect: DOMRect): Shard[] {
+  const cols = 6
+  const rows = 3
+  const pts: [number, number][][] = []
+  for (let r = 0; r <= rows; r++) {
+    pts[r] = []
+    for (let c = 0; c <= cols; c++) {
+      const edgeX = c === 0 || c === cols
+      const edgeY = r === 0 || r === rows
+      pts[r][c] = [
+        (c / cols) * rect.width + (edgeX ? 0 : rand(-0.35, 0.35) * (rect.width / cols)),
+        (r / rows) * rect.height + (edgeY ? 0 : rand(-0.35, 0.35) * (rect.height / rows)),
+      ]
+    }
+  }
+  const shards: Shard[] = []
+  const tri = (a: [number, number], b: [number, number], c: [number, number]) => {
+    const minX = Math.min(a[0], b[0], c[0])
+    const minY = Math.min(a[1], b[1], c[1])
+    const w = Math.max(a[0], b[0], c[0]) - minX
+    const h = Math.max(a[1], b[1], c[1]) - minY
+    const pct = (p: [number, number]) =>
+      `${(((p[0] - minX) / (w || 1)) * 100).toFixed(1)}% ${(((p[1] - minY) / (h || 1)) * 100).toFixed(1)}%`
+    shards.push({
+      id: shards.length,
+      clip: `polygon(${pct(a)}, ${pct(b)}, ${pct(c)})`,
+      left: rect.left + minX,
+      top: rect.top + minY,
+      width: w,
+      height: h,
+      dx: rand(-140, 140),
+      rot: rand(-160, 160),
+      delay: rand(0, 0.18),
+    })
+  }
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const p00 = pts[r][c]
+      const p10 = pts[r][c + 1]
+      const p01 = pts[r + 1][c]
+      const p11 = pts[r + 1][c + 1]
+      tri(p00, p10, p11)
+      tri(p00, p11, p01)
+    }
+  }
+  return shards
+}
+
+export function FishTank() {
+  const tankRef = useRef<HTMLDivElement>(null)
+  const foodLayerRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
+  const fishEls = useRef<(HTMLElement | null)[]>([])
+  const fish = useRef<Fish[]>([])
+  const food = useRef<Food[]>([])
+  const clicks = useRef<number[]>([])
+  const dragging = useRef<{ x: number; y: number } | null>(null)
+  const phaseRef = useRef<Phase>('intact')
+
+  const [phase, setPhase] = useState<Phase>('intact')
+  const [cracks, setCracks] = useState<Crack[]>([])
+  const [shards, setShards] = useState<Shard[]>([])
+  const [flood, setFlood] = useState<{ x: number; y: number } | null>(null)
+  const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+
+  const freed = phase !== 'intact'
+
+  // Seed three painted fish of different sizes, plus three ASCII ones that stay hidden
+  // in the tank until it breaks.
+  if (fish.current.length === 0) {
+    const kinds = [
+      { width: 104, ascii: false },
+      { width: 84, ascii: false },
+      { width: 70, ascii: false },
+      { width: 150, ascii: true },
+      { width: 128, ascii: true },
+      { width: 110, ascii: true },
+    ]
+    fish.current = kinds.map(({ width, ascii }, i) => ({
+      x: rand(0.1, 0.9) * 600,
+      y: rand(0.3, 0.7) * TANK_HEIGHT,
+      vx: (i % 2 ? 1 : -1) * WANDER_SPEED,
+      vy: 0,
+      width,
+      face: i % 2 ? -1 : 1,
+      tx: 0,
+      ty: 0,
+      phase: rand(0, Math.PI * 2),
+      ascii,
+      aspect: ascii ? ASCII_ASPECT : FISH_ASPECT,
+      mouth: ascii ? ASCII_MOUTH : MOUTH,
+    }))
+  }
+
+  // The simulation loop.
+  useEffect(() => {
+    let frame = 0
+    let last = performance.now()
+    const viewSize = () => {
+      if (phaseRef.current !== 'intact') return { w: window.innerWidth, h: window.innerHeight }
+      const el = tankRef.current
+      return { w: el?.clientWidth ?? 600, h: el?.clientHeight ?? TANK_HEIGHT }
+    }
+    const world = () => {
+      const v = viewSize()
+      return phaseRef.current === 'intact' ? tankWorld(v.w, v.h) : screenWorld()
+    }
+    // Start every fish inside the visible window, then let them wander.
+    const startView = viewSize()
+    fish.current.forEach((f) => {
+      if (phaseRef.current === 'intact') {
+        f.x = rand(0.2, 0.8) * startView.w
+        f.y = rand(0.3, 0.7) * startView.h
+      }
+      pickTarget(f, world(), startView)
+    })
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000)
+      last = now
+      const view = viewSize()
+      const bounds = world()
+      const pellets = food.current
+
+      for (const f of fish.current) {
+        // Head for the nearest food if there is any, otherwise wander.
+        let target: { x: number; y: number } | null = null
+        let speed = WANDER_SPEED
+        if (pellets.length) {
+          const m = mouthOf(f)
+          let best = Infinity
+          for (const p of pellets) {
+            const dist = Math.hypot(p.x - m.x, p.y - m.y)
+            if (dist < best) {
+              best = dist
+              target = { x: p.x - (m.x - f.x), y: p.y - (m.y - f.y) } // bring the mouth, not the centre, to it
+            }
+          }
+          speed = CHASE_SPEED
+        }
+        if (!target) {
+          if (Math.hypot(f.tx - f.x, f.ty - f.y) < 30) pickTarget(f, bounds, view)
+          target = { x: f.tx, y: f.ty }
+        }
+        const dx = target.x - f.x
+        const dy = target.y - f.y
+        const dist = Math.hypot(dx, dy) || 1
+        const want = Math.min(speed, dist * 2.5)
+        const steer = Math.min(1, dt * (pellets.length ? 2.6 : 1.1))
+        f.vx += ((dx / dist) * want - f.vx) * steer
+        f.vy += ((dy / dist) * want * 0.75 - f.vy) * steer
+        f.x = clamp(f.x + f.vx * dt, bounds.minX, bounds.maxX)
+        f.y = clamp(f.y + f.vy * dt, bounds.minY, bounds.maxY)
+
+        // Turn to face the way it's swimming, squashing through 0 like a real turn.
+        const wantFace = f.vx < -4 ? 1 : f.vx > 4 ? -1 : Math.sign(f.face) || 1
+        f.face += (wantFace - f.face) * Math.min(1, dt * 5)
+        if (Math.abs(f.face) < 0.06) f.face = 0.06 * wantFace
+        f.phase += dt * (5 + Math.hypot(f.vx, f.vy) / 12)
+
+        // Eat any pellet close to the mouth.
+        if (pellets.length) {
+          const m = mouthOf(f)
+          food.current = food.current.filter((p) => Math.hypot(p.x - m.x, p.y - m.y) > Math.max(9, f.width * 0.1))
+        }
+      }
+
+      // Food sinks, sways, and dissolves after a while.
+      food.current = food.current.filter((p) => now - p.born < FOOD_LIFE && p.y < view.h + 20)
+      for (const p of food.current) {
+        p.y += FOOD_SINK * dt
+        p.x += Math.sin((now - p.born) / 700 + p.drift) * 4 * dt
+      }
+
+      fish.current.forEach((f, i) => {
+        const el = fishEls.current[i]
+        if (el) el.style.transform = fishTransform(f, reduced)
+      })
+      const layer = foodLayerRef.current
+      if (layer) {
+        layer.innerHTML = food.current
+          .map((p) => {
+            const age = now - p.born
+            const fade = age > FOOD_LIFE - 1500 ? (FOOD_LIFE - age) / 1500 : 1
+            return `<span style="transform:translate(${(p.x - 3).toFixed(1)}px,${(p.y - 3).toFixed(1)}px);opacity:${fade.toFixed(2)}"></span>`
+          })
+          .join('')
+      }
+      frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [reduced])
+
+  const localPoint = (e: ReactPointerEvent) => {
+    const rect = tankRef.current!.getBoundingClientRect()
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+  }
+
+  const dropFood = (x: number, y: number) => {
+    food.current.push({ id: Math.random(), x, y, born: performance.now(), drift: rand(0, Math.PI * 2) })
+    if (food.current.length > 120) food.current.shift()
+  }
+
+  const shatter = useCallback(() => {
+    const tank = tankRef.current
+    if (!tank || phaseRef.current !== 'intact') return
+    const rect = tank.getBoundingClientRect()
+    // Switch worlds now (not on the next render) so the loop never clamps screen
+    // coordinates to the tank's bounds for a frame.
+    phaseRef.current = 'shattering'
+    // Move the fish from tank coordinates to screen coordinates before they go free.
+    for (const f of fish.current) {
+      f.x += rect.left
+      f.y += rect.top
+      f.vx *= 2.2
+      f.vy = rand(-60, 60)
+      pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight })
+    }
+    food.current = []
+    dragging.current = null
+    setShards(makeShards(rect))
+    setCracks([])
+    setFlood({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 })
+    setPhase('shattering')
+    window.setTimeout(() => {
+      setPhase('broken')
+    }, 1600)
+    window.setTimeout(() => setShards([]), 2200)
+  }, [])
+
+  const refill = () => {
+    const tank = tankRef.current
+    const rect = tank?.getBoundingClientRect()
+    for (const f of fish.current) {
+      // Bring each fish back into the tank, starting just outside the window.
+      f.x = rand(-0.4, 1.4) * (rect?.width ?? 600)
+      f.y = rand(0.2, 0.8) * TANK_HEIGHT
+      f.vx = 0
+      f.vy = 0
+    }
+    clicks.current = []
+    phaseRef.current = 'intact'
+    setFlood(null)
+    setPhase('intact')
+  }
+
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (phaseRef.current !== 'intact') return
+    const p = localPoint(e)
+    dropFood(p.x, p.y)
+    dragging.current = p
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId) // keep the drag going if it strays outside
+    } catch {
+      // Some synthetic or already-released pointers can't be captured; dragging still works.
+    }
+
+    // Too many clicks too fast: crack the glass, then shatter it.
+    const now = performance.now()
+    clicks.current = clicks.current.filter((t) => now - t < SPAM_WINDOW)
+    clicks.current.push(now)
+    const n = clicks.current.length
+    if (n >= SHATTER_AT) shatter()
+    else if (n >= CRACK_AT) setCracks((c) => [...c, makeCrack(p.x, p.y)])
+  }
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const p = localPoint(e)
+    const ring = ringRef.current
+    if (ring) {
+      ring.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`
+      ring.style.opacity = phaseRef.current === 'intact' ? '1' : '0'
+    }
+    // Dragging lays a line of food, one pellet every FOOD_SPACING pixels.
+    const d = dragging.current
+    if (!d || phaseRef.current !== 'intact') return
+    let dist = Math.hypot(p.x - d.x, p.y - d.y)
+    while (dist >= FOOD_SPACING) {
+      const t = FOOD_SPACING / dist
+      d.x += (p.x - d.x) * t
+      d.y += (p.y - d.y) * t
+      dropFood(d.x, d.y)
+      dist = Math.hypot(p.x - d.x, p.y - d.y)
+    }
+  }
+
+  const endDrag = () => {
+    dragging.current = null
+  }
+
+  const hideRing = () => {
+    if (ringRef.current) ringRef.current.style.opacity = '0'
+    endDrag()
+  }
+
+  // The sidebar seabed follows the tank: it only exists while the tank is broken (and is
+  // cleared whenever this tank mounts intact, e.g. after a reload or hot update).
+  useEffect(() => {
+    setTankBroken(phase === 'broken')
+  }, [phase])
+  useEffect(() => () => setTankBroken(false), [])
+
+  // Keep the freed fish inside the new world if the window is resized.
+  useEffect(() => {
+    if (!freed) return
+    const onResize = () => fish.current.forEach((f) => pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight }))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [freed])
+
+  // After the tank breaks, keep feeding: click (or drag) anywhere on the page that isn't
+  // a link, button or form field to drop food where the freed fish can reach it.
+  useEffect(() => {
+    if (phase !== 'broken') return
+    const interactive = 'a, button, input, textarea, select, label, summary, [role="button"], [role="dialog"]'
+    let last: { x: number; y: number } | null = null
+    const down = (e: PointerEvent) => {
+      if (e.button !== 0 || (e.target as Element | null)?.closest(interactive)) return
+      last = { x: e.clientX, y: e.clientY }
+      dropFood(last.x, last.y)
+    }
+    const move = (e: PointerEvent) => {
+      if (!last) return
+      if (!(e.buttons & 1)) {
+        last = null
+        return
+      }
+      window.getSelection()?.removeAllRanges() // feeding, not selecting text
+      let dist = Math.hypot(e.clientX - last.x, e.clientY - last.y)
+      while (dist >= FOOD_SPACING) {
+        const t = FOOD_SPACING / dist
+        last.x += (e.clientX - last.x) * t
+        last.y += (e.clientY - last.y) * t
+        dropFood(last.x, last.y)
+        dist = Math.hypot(e.clientX - last.x, e.clientY - last.y)
+      }
+    }
+    const up = () => {
+      last = null
+    }
+    document.addEventListener('pointerdown', down)
+    document.addEventListener('pointermove', move)
+    document.addEventListener('pointerup', up)
+    return () => {
+      document.removeEventListener('pointerdown', down)
+      document.removeEventListener('pointermove', move)
+      document.removeEventListener('pointerup', up)
+    }
+  }, [phase])
+
+  // Painted fish are images; ASCII fish are monospace text sized to the fish width.
+  const renderFish = (includeAscii: boolean) =>
+    fish.current.map((f, i) => {
+      if (f.ascii && !includeAscii) return null
+      const setRef = (el: HTMLElement | null) => {
+        fishEls.current[i] = el
+      }
+      const style = { width: f.width, height: f.width * f.aspect, transform: fishTransform(f, reduced) }
+      const className = 'pointer-events-none absolute left-0 top-0 origin-center select-none will-change-transform'
+      return f.ascii ? (
+        <div key={i} ref={setRef} className={className} style={style}>
+          <pre
+            className="m-0 font-mono text-accent"
+            style={{ fontSize: f.width / (ASCII_COLS * ASCII_CHAR_EM), lineHeight: ASCII_LINE_EM }}
+          >
+            {ASCII_ART}
+          </pre>
+        </div>
+      ) : (
+        <img key={i} ref={setRef} src={FISH_SRC} alt="" draggable={false} className={className} style={style} />
+      )
+    })
+
+  const foodLayer = (
+    <div
+      ref={foodLayerRef}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 [&>span]:absolute [&>span]:left-0 [&>span]:top-0 [&>span]:size-1.5 [&>span]:rounded-full [&>span]:bg-[#7a4320]"
+    />
+  )
+
+  return (
+    <>
+      <div
+        ref={tankRef}
+        role="img"
+        aria-label="A fish tank with three bettas from my painting. Click to drop food; drag to lay a line of it."
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onPointerLeave={hideRing}
+        className={`relative mt-12 touch-pan-y select-none overflow-hidden rounded-[10px] border transition-colors duration-700 md:mt-16 ${
+          freed ? 'cursor-default border-dashed border-ink/40' : 'cursor-pointer border-ink'
+        }`}
+        style={{
+          height: TANK_HEIGHT,
+          background: freed ? 'transparent' : `linear-gradient(180deg, ${TANK_BLUE} 0%, #8fc1db 100%)`,
+        }}
+      >
+        {/* Food sits behind the fish so they swim over it to eat. */}
+        {!freed && foodLayer}
+        {!freed && <div aria-hidden="true">{renderFish(false)}</div>}
+
+        {cracks.length > 0 && (
+          <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full">
+            {cracks.map((c) =>
+              c.lines.map((pts, i) => (
+                <polyline key={`${c.id}-${i}`} points={pts} fill="none" stroke="white" strokeWidth={1.4} strokeLinejoin="round" opacity={0.9} />
+              )),
+            )}
+          </svg>
+        )}
+
+        {phase === 'broken' && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={refill}
+              className="cursor-pointer rounded-full border border-ink bg-bg/80 px-4 py-2 font-mono text-xs text-ink"
+            >
+              refill the tank
+            </button>
+          </div>
+        )}
+
+        {/* Orange ring that follows the cursor over the tank. */}
+        <div
+          ref={ringRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 z-20 size-7 rounded-full border-2 border-accent opacity-0 transition-opacity duration-150"
+        />
+      </div>
+
+      {/* Freed fish (painted and ASCII) roam over the whole page, with their food. */}
+      {freed &&
+        createPortal(
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
+            {foodLayer}
+            {renderFish(true)}
+          </div>,
+          document.body,
+        )}
+
+      {/* Falling glass shards. */}
+      {shards.length > 0 &&
+        createPortal(
+          <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+            {shards.map((s) => (
+              <div
+                key={s.id}
+                className="tank-shard absolute"
+                style={
+                  {
+                    left: s.left,
+                    top: s.top,
+                    width: s.width,
+                    height: s.height,
+                    clipPath: s.clip,
+                    '--dx': `${s.dx}px`,
+                    '--rot': `${s.rot}deg`,
+                    animationDelay: `${s.delay}s`,
+                  } as React.CSSProperties
+                }
+              />
+            ))}
+          </div>,
+          document.body,
+        )}
+
+      {/* The water spills out of the tank and floods the page behind the content. */}
+      {flood &&
+        createPortal(
+          <div
+            aria-hidden="true"
+            className={`tank-flood pointer-events-none fixed inset-0 -z-10 ${reduced ? 'tank-flood-instant' : ''}`}
+            style={{ background: TANK_BLUE, '--fx': `${flood.x}px`, '--fy': `${flood.y}px` } as React.CSSProperties}
+          />,
+          document.body,
+        )}
+    </>
+  )
+}

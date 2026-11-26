@@ -2,10 +2,13 @@ import { Mail, ArrowRight } from 'lucide-react'
 import { GithubIcon, LinkedinIcon } from './BrandIcons'
 import { sections, hero } from '../data/content'
 import { useActiveSection } from '../hooks/useActiveSection'
+import { useTankBroken } from '../lib/tankStore'
+import { Seabed } from './Seabed'
 
 export function Sidebar() {
   const sectionIds = sections.map((s) => s.id)
   const activeId = useActiveSection(sectionIds)
+  const tankBroken = useTankBroken()
 
   return (
     // Outer element stretches to match the tall content column (default flex
@@ -74,6 +77,9 @@ export function Sidebar() {
             <Mail className="size-6" />
           </a>
         </div>
+
+        {/* Once the fish tank bursts, a little seabed settles into the free space here. */}
+        {tankBroken && <Seabed />}
       </div>
     </aside>
   )

@@ -100,3 +100,59 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* Fish tank: glass shards fall away when the tank shatters. */
+.tank-shard {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(169, 210, 230, 0.45));
+  animation: tank-shard-fall 1.6s cubic-bezier(0.45, 0, 0.8, 0.6) both;
+}
+
+@keyframes tank-shard-fall {
+  from {
+    transform: none;
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), 110vh) rotate(var(--rot));
+    opacity: 0.5;
+  }
+}
+
+/* ...and the water spreads out from the tank across the page. */
+.tank-flood {
+  clip-path: circle(0 at var(--fx) var(--fy));
+  animation: tank-flood-spread 2.2s cubic-bezier(0.3, 0, 0.6, 1) 0.25s forwards;
+}
+
+.tank-flood-instant {
+  clip-path: none;
+  animation: none;
+}
+
+@keyframes tank-flood-spread {
+  to {
+    clip-path: circle(160vmax at var(--fx) var(--fy));
+  }
+}
+
+/* The sidebar seabed rises into view after the tank bursts. */
+.seabed-in {
+  animation: seabed-in 1.2s ease-out both;
+}
+
+@keyframes seabed-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seabed-in {
+    animation: none;
+  }
+}
