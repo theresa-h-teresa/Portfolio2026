@@ -10,14 +10,18 @@ export function About() {
         grounded in real user needs—especially where technology, creativity, and community intersect.
       </p>
       <p className="mb-4">
-        Currently, I’m a Product and UX Research Assistant at Georgia Tech’s{' '}
+        Currently, I’m a Research Assistant at Northwestern’s{' '}
+        <a href="https://www.creativeinterfaces.northwestern.edu/" target="_blank" rel="noreferrer" className={linkClass}>
+          Creative Interfaces Research + Design Studio
+        </a>
+        , where I lead early-stage product discovery and participatory design workshops exploring how artists work with
+        AI-assisted creative tools. Before that, I was a Product and UX Research Assistant at Georgia Tech’s{' '}
         <a href="https://expressivemachinery.gatech.edu/" target="_blank" rel="noreferrer" className={linkClass}>
           Expressive Machinery Lab
         </a>
-        , where I work across product, design, and engineering to build interactive authoring tools and
-        experiences. I translate user and stakeholder research into product requirements, prototype new
-        interactions, and collaborate with researchers, engineers, and designers to connect research goals with
-        technology and user experience.
+        , where I worked across product, design, and engineering to build interactive authoring tools and
+        experiences—translating user and stakeholder research into product requirements, prototyping new
+        interactions, and collaborating with researchers, engineers, and designers.
       </p>
       <p className="mb-4">
         My background also spans{' '}
@@ -37,8 +41,8 @@ export function About() {
         decision-making.
       </p>
       <p className="mb-4">
-        I’m currently studying Journalism and Economics at Northwestern University, with a minor in Computer
-        Science, after beginning my undergraduate studies in Computational Media at Georgia Tech.
+        I’m currently studying Journalism with a second major in Economics and a minor in Computer Science at
+        Northwestern University’s Medill School of Journalism, after beginning my undergraduate studies in Computational Media at Georgia Tech.
       </p>
       <p>
         In my spare time, you can usually find me{' '}

@@ -8,10 +8,18 @@ function ExperienceCard({ item }: { item: ExperienceItem }) {
 
   return (
     <Wrapper
-      {...(item.href ? { href: item.href, target: '_blank', rel: 'noreferrer' } : {})}
-      className={`group block rounded-[10px] p-6 transition-colors duration-200 hover:bg-highlight-bg ${item.href ? 'cursor-pointer' : ''}`}
+      {...(item.href
+        ? {
+            href: item.href.startsWith('/') ? withBase(item.href) : item.href,
+            target: '_blank',
+            rel: 'noreferrer',
+          }
+        : {})}
+      className={`group block rounded-[10px] p-6 no-underline transition-colors duration-200 hover:bg-highlight-bg ${item.href ? 'cursor-pointer' : ''}`}
     >
-      <h3 className="font-display text-base font-medium text-ink transition-colors duration-200 group-hover:text-accent">
+      <h3
+        className={`font-display text-base font-medium text-ink underline-offset-3 transition-colors duration-200 group-hover:text-accent ${item.href ? 'group-hover:underline group-focus-visible:underline' : ''}`}
+      >
         {item.role} • {item.org}
       </h3>
       <p className="mb-3 font-display text-sm text-date">{item.date}</p>

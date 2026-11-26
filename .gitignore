@@ -16,7 +16,7 @@ dist-ssr
 public/Screenshot *.png
 
 # Raw video masters (large, not web-optimized) — compressed .mp4 versions are committed instead
-public/*.mov
+public/**/*.mov
 
 # Editor directories and files
 .vscode/*
@@ -28,6 +28,9 @@ public/*.mov
 *.njsproj
 *.sln
 *.sw?
+
+# Old Vite project + concept source files (site assets were copied into public/)
+portfolio-website/
 
 # Private resume, not published
 public/Fang_PM Resume_Sep24.pdf

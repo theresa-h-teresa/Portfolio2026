@@ -1,85 +1,33 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useRef, useState } from 'react'
 import { Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import { JournalismModalShell } from '../../journalism/JournalismModalShell'
-import { JLink } from '../../journalism/JournalismBlocks'
 import { withBase } from '../../../lib/url'
+import { CaseLink, CaseStudySection, ImageLightbox, SkillGroup, type CaseImage } from './CaseStudyParts'
 
 const repoHref = 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool'
 
 const tools = ['Figma', 'TouchDesigner', 'Unity 2D/3D', 'LoopMidi', 'Ableton', 'Max']
 const development = ['Python', 'JavaScript', 'HTML/CSS', 'C/C#']
 
+const dir = '/Sound Clouds'
 const uxImages = [
-  '/SoundClouds_UX Brainstorm Organization_A1.png',
-  '/SoundClouds_UX Brainstorm Organization_A2.png',
-  '/SoundClouds_UX Brainstorm Organization_A3.png',
-  '/SoundClouds_UX Brainstorm Organization_A4.png',
+  `${dir}/SoundClouds_UX Brainstorm Organization_A1.png`,
+  `${dir}/SoundClouds_UX Brainstorm Organization_A2.png`,
+  `${dir}/SoundClouds_UX Brainstorm Organization_A3.png`,
+  `${dir}/SoundClouds_UX Brainstorm Organization_A4.png`,
 ]
 const computerVisionImages = [
-  '/SoundClouds_ComputerVision_B1.png',
-  '/SoundClouds_ComputerVision_B2.png',
-  '/SoundClouds_ComputerVision_B3.png',
-  '/SoundClouds_ComputerVision_B4.png',
+  `${dir}/SoundClouds_ComputerVision_B1.png`,
+  `${dir}/SoundClouds_ComputerVision_B2.png`,
+  `${dir}/SoundClouds_ComputerVision_B3.png`,
+  `${dir}/SoundClouds_ComputerVision_B4.png`,
 ]
 const authoringToolImages = [
-  '/SoundClouds_AuthoringTool_C1.png',
-  '/SoundClouds_AuthoringTool_C2.png',
-  '/SoundClouds_AuthoringTool_C3.png',
-  '/SoundClouds_AuthoringTool_C4.png',
+  `${dir}/SoundClouds_AuthoringTool_C1.png`,
+  `${dir}/SoundClouds_AuthoringTool_C2.png`,
+  `${dir}/SoundClouds_AuthoringTool_C3.png`,
+  `${dir}/SoundClouds_AuthoringTool_C4.png`,
 ]
-
-function ToolButton({ label }: { label: string }) {
-  return (
-    <span className="inline-flex items-center justify-center rounded-[10px] border border-[#d9d9d9] bg-white px-3 py-2 text-xs text-ink shadow-[0px_4px_0px_0px_rgba(0,0,0,0.25)]">
-      {label}
-    </span>
-  )
-}
-
-function SkillGroup({ heading, items }: { heading: string; items: string[] }) {
-  return (
-    <div>
-      <p className="mb-2 font-display text-3xl font-normal text-[#72b0c9]">{heading}</p>
-      <div className="flex flex-wrap gap-2">
-        {items.map((item) => (
-          <ToolButton key={item} label={item} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function ImageGrid({ images, onImageClick }: { images: string[]; onImageClick: (src: string) => void }) {
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      {images.map((src) => (
-        <img
-          key={src}
-          src={withBase(src)}
-          alt=""
-          onClick={() => onImageClick(src)}
-          className="aspect-[8/5] w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
-        />
-      ))}
-    </div>
-  )
-}
-
-function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 md:p-10"
-      onClick={onClose}
-    >
-      <img
-        src={withBase(src)}
-        alt=""
-        onClick={(e) => e.stopPropagation()}
-        className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-      />
-    </div>
-  )
-}
 
 function VideoPlayer({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -144,44 +92,8 @@ function VideoPlayer({ src }: { src: string }) {
   )
 }
 
-function CaseStudySection({
-  id,
-  heading,
-  divider = true,
-  images,
-  onImageClick,
-  belowImages,
-  footer,
-  children,
-}: {
-  id: string
-  heading: string
-  divider?: boolean
-  images: string[]
-  onImageClick: (src: string) => void
-  belowImages?: ReactNode
-  footer?: ReactNode
-  children: ReactNode
-}) {
-  return (
-    <section id={id} className={`scroll-mt-4 ${divider ? 'border-t border-ink/10 pt-6' : ''}`}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-start">
-        <div className="md:w-60 md:shrink-0">
-          <h3 className="mb-3 font-display text-xl font-normal text-accent">{heading}</h3>
-          <div className="flex flex-col gap-2.5">{children}</div>
-        </div>
-        <div className="flex flex-1 flex-col gap-4">
-          <ImageGrid images={images} onImageClick={onImageClick} />
-          {belowImages}
-        </div>
-      </div>
-      {footer && <div className="mt-4 flex flex-col gap-4">{footer}</div>}
-    </section>
-  )
-}
-
 export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
+  const [lightboxImage, setLightboxImage] = useState<CaseImage | null>(null)
 
   return (
     <>
@@ -198,7 +110,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
               prior coding experience, could use and customize.
             </p>
             <div className="mt-3">
-              <JLink href={repoHref}>View the authoring tool repository</JLink>
+              <CaseLink href={repoHref}>View the authoring tool repository</CaseLink>
             </div>
           </div>
 
@@ -210,7 +122,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
 
         <div className="flex flex-col justify-between gap-1 border-t border-ink/10 pt-4 font-display font-normal text-[#72b0c9] sm:flex-row sm:items-baseline">
           <p className="text-3xl">EXPRESSIVE MACHINERY LAB</p>
-          <p className="text-sm">GEORGIA TECH, SEP 2025-PRESENT</p>
+          <p className="text-sm">GEORGIA TECH, AUG 2025-AUG 2026</p>
         </div>
 
         <CaseStudySection
@@ -218,7 +130,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           heading="UX and HCI Design"
           divider={false}
           images={uxImages}
-          onImageClick={setLightboxSrc}
+          onImageClick={setLightboxImage}
         >
           <p className="font-display text-base leading-snug text-ink">
             As part of a early-concept project for the Expressive Machinery Lab at Georgia Tech, I had the
@@ -239,7 +151,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           id="blob-tracking"
           heading="Computer Vision & Blob Tracking Model"
           images={computerVisionImages}
-          onImageClick={setLightboxSrc}
+          onImageClick={setLightboxImage}
         >
           <p className="font-display text-base leading-snug text-ink">
             To develop the human-computer interactive pipeline, I worked with the engineering team to the computer
@@ -253,7 +165,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           id="authoring-tool"
           heading="Authoring Tool for 2D & 3D Interactions"
           images={authoringToolImages}
-          onImageClick={setLightboxSrc}
+          onImageClick={setLightboxImage}
           belowImages={
             <p className="font-display text-base leading-snug text-ink">
               To ensure accuracy and smooth workflow throughout this process, I cross-examined the code with the
@@ -264,8 +176,8 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           }
           footer={
             <>
-              <VideoPlayer src="/SoundClouds_Video1.mp4" />
-              <VideoPlayer src="/SoundClouds_Video2.mp4" />
+              <VideoPlayer src={`${dir}/SoundClouds_Video1.mp4`} />
+              <VideoPlayer src={`${dir}/SoundClouds_Video2.mp4`} />
             </>
           }
         >
@@ -287,7 +199,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
         </CaseStudySection>
       </JournalismModalShell>
 
-      {lightboxSrc && <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
+      {lightboxImage && <ImageLightbox image={lightboxImage} onClose={() => setLightboxImage(null)} />}
     </>
   )
 }

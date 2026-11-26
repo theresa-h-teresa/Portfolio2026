@@ -1,8 +1,13 @@
 import { useState, type ComponentType } from 'react'
 import { projects, type ProjectItem } from '../data/content'
 import { SkillPill } from './SkillPill'
+import { PlaceholderImage } from './PlaceholderImage'
 import { withBase } from '../lib/url'
 import { SoundCloudsCard } from './projects/cards/SoundCloudsCard'
+import { JobMamaCard } from './projects/cards/JobMamaCard'
+import { ChangiCard } from './projects/cards/ChangiCard'
+import { CurioCard } from './projects/cards/CurioCard'
+import { PortfolioCard } from './projects/cards/PortfolioCard'
 
 function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () => void }) {
   const Wrapper = onOpenCard ? 'button' : item.href ? 'a' : 'div'
@@ -14,15 +19,21 @@ function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () 
         : item.href
           ? { href: item.href, target: '_blank', rel: 'noreferrer' }
           : {})}
-      className={`group flex w-full flex-col gap-4 rounded-[10px] p-6 text-left transition-colors duration-200 hover:bg-highlight-bg md:flex-row ${onOpenCard || item.href ? 'cursor-pointer' : ''}`}
+      className={`group flex w-full flex-col gap-4 rounded-[10px] p-6 text-left no-underline transition-colors duration-200 hover:bg-highlight-bg md:flex-row ${onOpenCard || item.href ? 'cursor-pointer' : ''}`}
     >
-      <img
-        src={withBase(item.thumbnail)}
-        alt={item.title}
-        className="h-[83px] w-[124px] shrink-0 rounded-lg object-cover"
-      />
+      {item.thumbnail ? (
+        <img
+          src={withBase(item.thumbnail)}
+          alt={item.title}
+          className="h-[83px] w-[124px] shrink-0 rounded-lg object-cover"
+        />
+      ) : (
+        <PlaceholderImage className="h-[83px] w-[124px] shrink-0" />
+      )}
       <div>
-        <h3 className="font-display text-base font-medium text-ink transition-colors duration-200 group-hover:text-accent">
+        <h3
+          className={`font-display text-base font-medium text-ink underline-offset-3 transition-colors duration-200 group-hover:text-accent ${onOpenCard || item.href ? 'group-hover:underline group-focus-visible:underline' : ''}`}
+        >
           {item.title}
         </h3>
         <p className="mb-3 font-display text-sm font-normal text-ink transition-colors duration-200 group-hover:text-accent">
@@ -41,6 +52,10 @@ function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () 
 
 const detailCards: Record<string, ComponentType<{ onClose: () => void }>> = {
   'Sound Clouds / ARRAY': SoundCloudsCard,
+  'Job Mama': JobMamaCard,
+  'Singapore Changi Airport': ChangiCard,
+  Curio: CurioCard,
+  'teresafang.net': PortfolioCard,
 }
 
 export function Projects() {
@@ -49,7 +64,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="scroll-mt-[92px] flex flex-col gap-6 pt-8 pb-12 md:pt-10 md:pb-16">
-      <p className="font-mono text-sm text-ink/60">PROJECTS</p>
+      <p className="font-mono text-sm text-ink/60">UI/UX & ENGINEERING PROJECTS</p>
       {projects.map((item) => {
         const hasDetailCard = item.title in detailCards
         return (

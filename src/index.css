@@ -68,6 +68,30 @@ body {
   box-sizing: border-box;
 }
 
+/* Underline the text of every link and clickable element on hover/focus.
+   Lives in the base layer so a Tailwind utility (e.g. `no-underline`) can
+   still opt an element out. */
+@layer base {
+  a,
+  button,
+  [role='button'],
+  summary {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  a:hover,
+  a:focus-visible,
+  button:hover,
+  button:focus-visible,
+  [role='button']:hover,
+  [role='button']:focus-visible,
+  summary:hover,
+  summary:focus-visible {
+    text-decoration-line: underline;
+  }
+}
+
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
