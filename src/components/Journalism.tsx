@@ -30,7 +30,7 @@ export function Journalism() {
   const ActiveCardComponent = activeCard ? cardComponents[activeCard] : null
 
   return (
-    <section id="journalism" className="scroll-mt-4 pt-8 pb-12 md:pt-10 md:pb-16">
+    <section id="journalism" className="scroll-mt-4 pt-8 pb-10 lg:pt-10 lg:pb-16">
       <p className="mb-6 font-mono text-sm text-ink/60">JOURNALISM</p>
       <div className="mb-4 flex items-start gap-8 font-mono text-xs leading-relaxed text-ink">
         <ArrowRight className="mt-0.5 size-4 shrink-0" />

@@ -172,3 +172,23 @@ body {
     opacity: 0;
   }
 }
+
+/* The ASCII fish fade in where they appear once the tank breaks. */
+.tank-fish-appear {
+  animation: tank-fish-appear 1.2s ease-out both;
+}
+
+@keyframes tank-fish-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tank-fish-appear {
+    animation: none;
+  }
+}

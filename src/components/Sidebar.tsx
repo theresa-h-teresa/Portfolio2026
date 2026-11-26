@@ -14,8 +14,8 @@ export function Sidebar() {
     // Outer element stretches to match the tall content column (default flex
     // align-items: stretch), giving the inner sticky wrapper room to travel
     // across the full scroll instead of unsticking almost immediately.
-    <aside className="md:w-[563px] md:shrink-0">
-      <div className="flex flex-col gap-8 pt-12 pb-24 md:sticky md:top-0 md:pt-16 md:pb-32">
+    <aside className="lg:w-[400px] lg:shrink-0 xl:w-[563px]">
+      <div className="flex flex-col gap-6 pt-10 pb-2 sm:gap-8 sm:pt-12 lg:sticky lg:top-0 lg:pt-16 lg:pb-32">
         <div className="inline-flex w-fit items-center gap-2 rounded-full border border-ink bg-pill-bg px-4 py-1.5">
           <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-75" />
@@ -24,11 +24,11 @@ export function Sidebar() {
           <span className="font-mono text-xs text-ink">OPEN FOR WORK</span>
         </div>
 
-        <h1 className="font-display text-4xl leading-[0.9] font-black text-ink md:text-6xl">
+        <h1 className="font-display text-5xl leading-[0.9] font-black text-ink sm:text-6xl">
           {hero.name}
         </h1>
 
-        <div className="flex max-w-md items-start gap-8">
+        <div className="flex max-w-md items-start gap-4 sm:gap-8">
           <ArrowRight className="mt-0.5 size-4 shrink-0 text-ink" />
           <p className="font-mono text-xs leading-relaxed text-ink">{hero.tagline}</p>
         </div>

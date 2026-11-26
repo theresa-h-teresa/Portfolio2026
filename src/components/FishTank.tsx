@@ -4,7 +4,7 @@ import { withBase } from '../lib/url'
 import { setTankBroken } from '../lib/tankStore'
 import { BETTA } from '../data/bettaSprite'
 
-// A fish tank banner with bettas cut out of my painting (each a random size).
+// A fish tank banner with three bettas cut out of my painting (each a random size).
 //
 // - Before it breaks, the tank holds just three painted bettas, kept fully inside the
 //   frame. They wander, turn, and keep some distance from each other.
@@ -12,10 +12,10 @@ import { BETTA } from '../data/bettaSprite'
 // - Hovering shows an orange ring around the cursor. Clicking drops a pellet of food;
 //   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
 //   uneaten food sinks and dissolves after a while.
-// - Clicking too fast cracks the glass, and then it shatters: the shards fall, the
+// - A quick double-tap cracks the glass; quick taps after that crack it further, and once
+//   it has eight cracks it shatters: the shards fall, the
 //   water floods out across the page (turning the background blue), and the fish swim
-//   free over the whole screen, joined by three more painted bettas and three orange and
-//   three green ASCII ones (from the ASCII version of the painting) that only appear once the tank
+//   free over the whole screen, joined by three orange and three green ASCII ones (from the ASCII version of the painting) that only appear once the tank
 //   is broken. Fish keep some distance from each other instead of piling up. You can keep
 //   feeding them: click or drag anywhere on the page (outside links and buttons).
 //   "Refill the tank" puts everything back.
@@ -53,9 +53,32 @@ const CHASE_SPEED = 230 // fish dart for food much faster than they wander
 const FOOD_SINK = 12 // px/s
 const FOOD_LIFE = 12_000 // ms before uneaten food dissolves
 const FOOD_SPACING = 16 // px between pellets when dragging
-const SPAM_WINDOW = 2500 // ms
-const CRACK_AT = 6 // clicks inside the window before the glass starts cracking
-const SHATTER_AT = 12 // ...and before it shatters
+// Turning: only turn around after clearly swimming the other way for a moment, and not
+// again right away, so small back-and-forth nudges don't make fish flip constantly.
+const TURN_SPEED = 14 // px/s of sideways speed that counts as "the other way"
+const TURN_HOLD = 0.4 // s of wanting to turn before turning (0.12 s when chasing food)
+const TURN_GAP = 1100 // ms between turns (450 ms when chasing food)
+// Bubbles: every few seconds a fish blows a little stream from its mouth. They grow
+// from "." to "o" to "O"/"0" as they rise and wobble, then fade away.
+const BUBBLE_EVERY: [number, number] = [1600, 4800] // ms between a fish's puffs (random in this range)
+const BUBBLE_RISE = 24 // px/s
+const BUBBLE_LIFE: [number, number] = [2400, 4200] // ms
+const BUBBLE_BLUE = '#3d86b3'
+
+// Fish are full size on desktop and scale down on iPad and phones.
+const sizeScale = () => clamp(window.innerWidth / 1280, 0.55, 1)
+
+// Tapping a painted fish: a little ASCII fart from its tail end, then it darts away.
+const FLEE_SPEED = 360 // px/s
+const FLEE_MS = 1100
+const PUFF_MS = 1000
+const PUFF_COLOR = '#6b7a2a'
+const PUFF_FRAMES = ['~', ' ~\n~ ~', " ~ ~\n~ ' ~\n ~ ~"]
+
+const DOUBLE_TAP_MS = 350 // two taps this close together (in time)...
+const DOUBLE_TAP_PX = 40 // ...and in space make the first crack
+const RAPID_TAP_MS = 600 // once cracked, each tap this soon after the last adds a crack
+const CRACKS_TO_SHATTER = 8
 const CAPTION = "don't tap the glass!"
 const PERSONAL_SPACE = 0.6 // fish keep about this many (summed) widths apart
 const SEPARATION_SPEED = 160 // px/s of push away from a fish that is too close
@@ -65,8 +88,16 @@ interface Fish {
   y: number
   vx: number
   vy: number
-  width: number
+  width: number // current on-screen width (baseWidth scaled to the screen)
+  baseWidth: number // width at desktop size
   face: number // +1 = facing left (as painted), -1 = facing right; eases through 0 when turning
+  facing: 1 | -1 // the way it has decided to face (face eases toward this)
+  turnHold: number // seconds it has wanted to turn around
+  lastTurn: number // when it last turned (ms)
+  nextBubble: number // when it next blows bubbles (ms)
+  fleeUntil: number // darting away (after being tapped) until this time (ms)
+  fleeX: number // direction of the dart
+  fleeY: number
   tx: number // wander target
   ty: number
   phase: number
@@ -75,6 +106,22 @@ interface Fish {
   color: string // text colour for ASCII fish
   aspect: number // height / width
   mouth: { x: number; y: number } // fractions of the sprite (facing left)
+}
+
+interface Puff {
+  x: number
+  y: number
+  born: number
+  drift: number // which way the puff drifts (away from the fish)
+}
+
+interface Bubble {
+  x: number
+  y: number
+  born: number
+  life: number
+  drift: number
+  big: string // "O" or "0" once it has grown
 }
 
 interface Food {
@@ -270,11 +317,18 @@ function makeShards(rect: DOMRect): Shard[] {
 export function FishTank() {
   const tankRef = useRef<HTMLDivElement>(null)
   const foodLayerRef = useRef<HTMLDivElement>(null)
+  const bubbleLayerRef = useRef<HTMLDivElement>(null)
+  const bubbles = useRef<Bubble[]>([])
+  const puffLayerRef = useRef<HTMLDivElement>(null)
+  const puffs = useRef<Puff[]>([])
+  const [, setSizeTick] = useState(0) // re-render when the fish are resized
   const ringRef = useRef<HTMLDivElement>(null)
   const fishEls = useRef<(HTMLElement | null)[]>([])
   const fish = useRef<Fish[]>([])
   const food = useRef<Food[]>([])
-  const clicks = useRef<number[]>([])
+  const lastTap = useRef<{ t: number; x: number; y: number } | null>(null)
+  const lastTapAt = useRef(0)
+  const crackCount = useRef(0)
   const dragging = useRef<{ x: number; y: number } | null>(null)
   const phaseRef = useRef<Phase>('intact')
   const letterFall = useRef(
@@ -297,10 +351,7 @@ export function FishTank() {
     const kinds = [
       painted(false),
       painted(false),
-      painted(false), // in the tank from the start
-      painted(true),
-      painted(true),
-      painted(true), // more painted fish that join once the tank breaks
+      painted(false), // the three painted fish (the only ones in the intact tank)
       asciiFish(ASCII_ORANGE),
       asciiFish(ASCII_ORANGE),
       asciiFish(ASCII_ORANGE),
@@ -308,13 +359,22 @@ export function FishTank() {
       asciiFish(ASCII_GREEN),
       asciiFish(ASCII_GREEN),
     ]
-    fish.current = kinds.map(({ width, ascii, onlyFree, color }, i) => ({
+    const scaleNow = sizeScale()
+    fish.current = kinds.map(({ width: baseWidth, ascii, onlyFree, color }, i) => ({
       x: rand(0.1, 0.9) * 600,
       y: rand(0.3, 0.7) * TANK_HEIGHT,
       vx: (i % 2 ? 1 : -1) * WANDER_SPEED,
       vy: 0,
-      width,
+      width: Math.round(baseWidth * scaleNow),
+      baseWidth,
       face: i % 2 ? -1 : 1,
+      facing: i % 2 ? -1 : 1,
+      turnHold: 0,
+      lastTurn: 0,
+      nextBubble: rand(...BUBBLE_EVERY),
+      fleeUntil: 0,
+      fleeX: 0,
+      fleeY: 0,
       tx: 0,
       ty: 0,
       phase: rand(0, Math.PI * 2),
@@ -362,10 +422,11 @@ export function FishTank() {
       const active = phaseRef.current === 'intact' ? fish.current.filter((f) => !f.onlyFree) : fish.current
       for (const f of active) {
         const bounds = boundsFor(f, view)
+        const fleeing = now < f.fleeUntil
         // Head for the nearest food if there is any, otherwise wander.
         let target: { x: number; y: number } | null = null
         let speed = WANDER_SPEED
-        if (pellets.length) {
+        if (pellets.length && !fleeing) {
           const m = mouthOf(f)
           let best = Infinity
           for (const p of pellets) {
@@ -387,21 +448,39 @@ export function FishTank() {
         const want = Math.min(speed, dist * 2.5)
         const steer = Math.min(1, dt * (pellets.length ? 4 : 1.1))
         // Keep some distance from the other fish (gentler when racing for food).
-        const sep = separation(f, active)
-        const sepSpeed = SEPARATION_SPEED * (pellets.length ? 0.5 : 1)
-        f.vx += ((dx / dist) * want + sep.x * sepSpeed - f.vx) * steer
-        f.vy += ((dy / dist) * want * 0.75 + sep.y * sepSpeed - f.vy) * steer
+        if (fleeing) {
+          // Startled: dart off in the chosen direction, ignoring food and the others.
+          const kick = Math.min(1, dt * 6)
+          f.vx += (f.fleeX * FLEE_SPEED - f.vx) * kick
+          f.vy += (f.fleeY * FLEE_SPEED - f.vy) * kick
+        } else {
+          const sep = separation(f, active)
+          const sepSpeed = SEPARATION_SPEED * (pellets.length ? 0.5 : 1)
+          f.vx += ((dx / dist) * want + sep.x * sepSpeed - f.vx) * steer
+          f.vy += ((dy / dist) * want * 0.75 + sep.y * sepSpeed - f.vy) * steer
+        }
         f.x = clamp(f.x + f.vx * dt, bounds.minX, bounds.maxX)
         f.y = clamp(f.y + f.vy * dt, bounds.minY, bounds.maxY)
 
         // Turn to face the way it's swimming, squashing through 0 like a real turn.
-        const wantFace = f.vx < -4 ? 1 : f.vx > 4 ? -1 : Math.sign(f.face) || 1
-        f.face += (wantFace - f.face) * Math.min(1, dt * 5)
-        if (Math.abs(f.face) < 0.06) f.face = 0.06 * wantFace
+        const wantFace = fleeing ? f.facing : f.vx < -TURN_SPEED ? 1 : f.vx > TURN_SPEED ? -1 : f.facing
+        if (wantFace !== f.facing) {
+          f.turnHold += dt
+          const hungry = pellets.length > 0
+          if (f.turnHold >= (hungry ? 0.12 : TURN_HOLD) && now - f.lastTurn >= (hungry ? 450 : TURN_GAP)) {
+            f.facing = wantFace
+            f.lastTurn = now
+            f.turnHold = 0
+          }
+        } else {
+          f.turnHold = 0
+        }
+        f.face += (f.facing - f.face) * Math.min(1, dt * 5)
+        if (Math.abs(f.face) < 0.06) f.face = 0.06 * f.facing
         f.phase += dt * (5 + Math.hypot(f.vx, f.vy) / 12)
 
         // Eat any pellet close to the mouth.
-        if (pellets.length) {
+        if (pellets.length && !fleeing) {
           const m = mouthOf(f)
           food.current = food.current.filter((p) => Math.hypot(p.x - m.x, p.y - m.y) > Math.max(9, f.width * 0.1))
         }
@@ -418,6 +497,59 @@ export function FishTank() {
         const el = fishEls.current[i]
         if (el) el.style.transform = fishTransform(f, reduced)
       })
+      // Bubbles: puff from each swimming fish's mouth now and then, rise, then fade out.
+      for (const f of active) {
+        if (now < f.nextBubble) continue
+        f.nextBubble = now + rand(...BUBBLE_EVERY)
+        const m = mouthOf(f)
+        const n = Math.random() < 0.4 ? 2 : 1 + Math.round(Math.random())
+        for (let k = 0; k < n; k++) {
+          bubbles.current.push({
+            x: m.x - Math.sign(f.face || 1) * rand(2, 8),
+            y: m.y - k * 9,
+            born: now + k * 140, // a little stream, not all at once
+            life: rand(...BUBBLE_LIFE),
+            drift: rand(0, Math.PI * 2),
+            big: Math.random() < 0.5 ? 'O' : '0',
+          })
+        }
+      }
+      bubbles.current = bubbles.current.filter((b) => now - b.born < b.life && b.y > -30)
+      for (const b of bubbles.current) {
+        if (now < b.born) continue
+        b.y -= BUBBLE_RISE * dt
+        b.x += Math.sin((now - b.born) / 380 + b.drift) * 9 * dt
+      }
+      const bubbleLayer = bubbleLayerRef.current
+      if (bubbleLayer) {
+        bubbleLayer.innerHTML = bubbles.current
+          .filter((b) => now >= b.born)
+          .map((b) => {
+            const t = (now - b.born) / b.life
+            const glyph = t < 0.22 ? '.' : t < 0.55 ? 'o' : b.big
+            const fade = t > 0.7 ? (1 - t) / 0.3 : 1
+            return `<span style="transform:translate(${b.x.toFixed(1)}px,${b.y.toFixed(1)}px) translate(-50%,-50%);opacity:${fade.toFixed(2)}">${glyph}</span>`
+          })
+          .join('')
+      }
+
+      // Fart puffs grow, drift away from the fish, and fade.
+      puffs.current = puffs.current.filter((p) => now - p.born < PUFF_MS)
+      const puffLayer = puffLayerRef.current
+      if (puffLayer) {
+        puffLayer.innerHTML = puffs.current
+          .map((p) => {
+            const t = (now - p.born) / PUFF_MS
+            const frame = PUFF_FRAMES[Math.min(PUFF_FRAMES.length - 1, Math.floor(t * 4))]
+            const x = p.x + p.drift * 22 * t
+            const y = p.y - 10 * t
+            const fade = t > 0.6 ? (1 - t) / 0.4 : 1
+            const label = t < 0.75 ? '<b>pfft!</b>' : ''
+            return `<span style="transform:translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%) scale(${(0.8 + t * 0.6).toFixed(2)});opacity:${fade.toFixed(2)}">${label}${frame}</span>`
+          })
+          .join('')
+      }
+
       const layer = foodLayerRef.current
       if (layer) {
         layer.innerHTML = food.current
@@ -444,6 +576,38 @@ export function FishTank() {
     if (food.current.length > 120) food.current.shift()
   }
 
+  /** The painted fish under a point (in the current world's coordinates), if any. */
+  const paintedFishAt = (x: number, y: number) => {
+    const swimming = fish.current.filter((f) => !f.ascii && (phaseRef.current !== 'intact' || !f.onlyFree))
+    // Topmost first (later fish are drawn on top); an oval a bit smaller than the image.
+    for (let i = swimming.length - 1; i >= 0; i--) {
+      const f = swimming[i]
+      const dx = (x - f.x) / (f.width * 0.42)
+      const dy = (y - f.y) / (f.width * f.aspect * 0.4)
+      if (dx * dx + dy * dy < 1) return f
+    }
+    return null
+  }
+
+  /** A little fart from the tail end, then dart away fast in a random direction. */
+  const startle = (f: Fish) => {
+    const now = performance.now()
+    const tailSide = Math.sign(f.face || 1) // the tail is on the right when facing left
+    puffs.current.push({
+      x: f.x + tailSide * f.width * 0.46,
+      y: f.y + f.width * f.aspect * 0.08,
+      born: now,
+      drift: tailSide,
+    })
+    const a = rand(0, Math.PI * 2)
+    f.fleeX = Math.cos(a)
+    f.fleeY = Math.sin(a) * 0.7
+    f.fleeUntil = now + FLEE_MS
+    f.facing = f.fleeX < 0 ? 1 : -1 // face the way it bolts
+    f.lastTurn = now
+    f.turnHold = 0
+  }
+
   const shatter = useCallback(() => {
     const tank = tankRef.current
     if (!tank || phaseRef.current !== 'intact') return
@@ -451,15 +615,29 @@ export function FishTank() {
     // Switch worlds now (not on the next render) so the loop never clamps screen
     // coordinates to the tank's bounds for a frame.
     phaseRef.current = 'shattering'
-    // Move the fish from tank coordinates to screen coordinates before they go free.
+    // The painted fish burst out of the tank (tank -> screen coordinates); the hidden
+    // ASCII fish instead appear at random spots on the screen and fade in.
+    const vw = window.innerWidth
+    const vh = window.innerHeight
     for (const f of fish.current) {
-      f.x += rect.left
-      f.y += rect.top
-      f.vx *= 2.2
-      f.vy = rand(-60, 60)
-      pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight }, fish.current)
+      if (f.onlyFree) {
+        f.x = rand(0.1, 0.9) * vw
+        f.y = rand(0.15, 0.85) * vh
+        f.vx = rand(-30, 30)
+        f.vy = rand(-20, 20)
+        f.facing = f.vx < 0 ? 1 : -1
+        f.face = f.facing
+      } else {
+        f.x += rect.left
+        f.y += rect.top
+        f.vx *= 2.2
+        f.vy = rand(-60, 60)
+      }
+      pickTarget(f, screenWorld(), { w: vw, h: vh }, fish.current)
     }
     food.current = []
+    bubbles.current = []
+    puffs.current = []
     dragging.current = null
     setShards(makeShards(rect))
     setCracks([])
@@ -482,7 +660,11 @@ export function FishTank() {
       f.vx = 0
       f.vy = 0
     }
-    clicks.current = []
+    bubbles.current = []
+    puffs.current = []
+    lastTap.current = null
+    lastTapAt.current = 0
+    crackCount.current = 0
     phaseRef.current = 'intact'
     setFlood(null)
     setPhase('intact')
@@ -491,6 +673,12 @@ export function FishTank() {
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (phaseRef.current !== 'intact') return
     const p = localPoint(e)
+    // Tapping a painted fish startles it instead of dropping food or tapping the glass.
+    const hit = paintedFishAt(p.x, p.y)
+    if (hit) {
+      startle(hit)
+      return
+    }
     dropFood(p.x, p.y)
     dragging.current = p
     try {
@@ -499,13 +687,29 @@ export function FishTank() {
       // Some synthetic or already-released pointers can't be captured; dragging still works.
     }
 
-    // Too many clicks too fast: crack the glass, then shatter it.
+    // Tapping the glass: a quick double-tap makes the first crack. After that, every
+    // quick follow-up tap adds another; with eight cracks the tank shatters. Slow,
+    // single clicks just drop food.
     const now = performance.now()
-    clicks.current = clicks.current.filter((t) => now - t < SPAM_WINDOW)
-    clicks.current.push(now)
-    const n = clicks.current.length
-    if (n >= SHATTER_AT) shatter()
-    else if (n >= CRACK_AT) setCracks((c) => [...c, makeCrack(p.x, p.y)])
+    const addCrack = (x: number, y: number) => {
+      if (crackCount.current >= CRACKS_TO_SHATTER) return // already about to shatter
+      crackCount.current++
+      setCracks((c) => [...c, makeCrack(x, y)])
+      // Show the eighth crack for a beat, then the glass gives way.
+      if (crackCount.current === CRACKS_TO_SHATTER) window.setTimeout(shatter, 300)
+    }
+    if (crackCount.current === 0) {
+      const prev = lastTap.current
+      if (prev && now - prev.t < DOUBLE_TAP_MS && Math.hypot(p.x - prev.x, p.y - prev.y) < DOUBLE_TAP_PX) {
+        lastTap.current = null
+        addCrack((p.x + prev.x) / 2, (p.y + prev.y) / 2)
+      } else {
+        lastTap.current = { t: now, x: p.x, y: p.y }
+      }
+    } else if (now - lastTapAt.current < RAPID_TAP_MS) {
+      addCrack(p.x, p.y)
+    }
+    lastTapAt.current = now
   }
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -513,7 +717,7 @@ export function FishTank() {
     const ring = ringRef.current
     if (ring) {
       ring.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`
-      ring.style.opacity = phaseRef.current === 'intact' ? '1' : '0'
+      ring.style.opacity = phaseRef.current === 'intact' && e.pointerType !== 'touch' ? '1' : '0'
     }
     // Dragging lays a line of food, one pellet every FOOD_SPACING pixels.
     const d = dragging.current
@@ -544,6 +748,24 @@ export function FishTank() {
   }, [phase])
   useEffect(() => () => setTankBroken(false), [])
 
+  // Resize the fish with the screen (smaller on iPad and phones).
+  useEffect(() => {
+    const onResize = () => {
+      const scaleNow = sizeScale()
+      let changed = false
+      for (const f of fish.current) {
+        const w = Math.round(f.baseWidth * scaleNow)
+        if (w !== f.width) {
+          f.width = w
+          changed = true
+        }
+      }
+      if (changed) setSizeTick((n) => n + 1)
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   // Keep the freed fish inside the new world if the window is resized.
   useEffect(() => {
     if (!freed) return
@@ -560,8 +782,18 @@ export function FishTank() {
     if (phase !== 'broken') return
     const interactive = 'a, button, input, textarea, select, label, summary, [role="button"], [role="dialog"]'
     let last: { x: number; y: number } | null = null
+    let touchStart: { x: number; y: number } | null = null
     const down = (e: PointerEvent) => {
       if (e.button !== 0 || (e.target as Element | null)?.closest(interactive)) return
+      if (e.pointerType === 'touch') {
+        touchStart = { x: e.clientX, y: e.clientY } // decide on lift: tap = food, swipe = scroll
+        return
+      }
+      const hit = paintedFishAt(e.clientX, e.clientY)
+      if (hit) {
+        startle(hit)
+        return
+      }
       last = { x: e.clientX, y: e.clientY }
       dropFood(last.x, last.y)
     }
@@ -581,7 +813,13 @@ export function FishTank() {
         dist = Math.hypot(e.clientX - last.x, e.clientY - last.y)
       }
     }
-    const up = () => {
+    const up = (e: PointerEvent) => {
+      if (touchStart && Math.hypot(e.clientX - touchStart.x, e.clientY - touchStart.y) < 10) {
+        const hit = paintedFishAt(e.clientX, e.clientY)
+        if (hit) startle(hit)
+        else dropFood(e.clientX, e.clientY)
+      }
+      touchStart = null
       last = null
     }
     document.addEventListener('pointerdown', down)
@@ -604,7 +842,12 @@ export function FishTank() {
       const style = { width: f.width, height: f.width * f.aspect, transform: fishTransform(f, reduced) }
       const className = 'pointer-events-none absolute left-0 top-0 origin-center select-none will-change-transform'
       return f.ascii ? (
-        <div key={i} ref={setRef} className={className} style={style}>
+        <div
+          key={i}
+          ref={setRef}
+          className={`${className} tank-fish-appear`}
+          style={{ ...style, animationDelay: `${(0.3 + (i % 6) * 0.25).toFixed(2)}s` }}
+        >
           <pre
             className="m-0 font-mono"
             style={{ color: f.color, fontSize: f.width / (ASCII_COLS * ASCII_CHAR_EM), lineHeight: ASCII_LINE_EM }}
@@ -616,6 +859,24 @@ export function FishTank() {
         <img key={i} ref={setRef} src={FISH_SRC} alt="" draggable={false} className={className} style={style} />
       )
     })
+
+  const puffLayer = (
+    <div
+      ref={puffLayerRef}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-10 font-mono text-[12px] leading-none [&>span]:absolute [&>span]:left-0 [&>span]:top-0 [&>span]:whitespace-pre [&>span]:text-center [&_b]:mb-0.5 [&_b]:block [&_b]:font-normal"
+      style={{ color: PUFF_COLOR }}
+    />
+  )
+
+  const bubbleLayer = (
+    <div
+      ref={bubbleLayerRef}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 font-mono text-[11px] leading-none [&>span]:absolute [&>span]:left-0 [&>span]:top-0"
+      style={{ color: BUBBLE_BLUE }}
+    />
+  )
 
   const foodLayer = (
     <div
@@ -636,17 +897,18 @@ export function FishTank() {
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         onPointerLeave={hideRing}
-        className={`relative mt-12 touch-pan-y select-none overflow-hidden rounded-[10px] border transition-colors duration-700 md:mt-16 ${
+        className={`relative mt-2 h-[220px] touch-pan-y select-none overflow-hidden rounded-[10px] border transition-colors duration-700 sm:h-[260px] lg:mt-16 ${
           freed ? 'cursor-default border-dashed border-ink/40' : 'cursor-pointer border-ink'
         }`}
         style={{
-          height: TANK_HEIGHT,
           background: freed ? 'transparent' : `linear-gradient(180deg, ${TANK_BLUE} 0%, #8fc1db 100%)`,
         }}
       >
         {/* Food sits behind the fish so they swim over it to eat. */}
         {!freed && foodLayer}
+        {!freed && bubbleLayer}
         {!freed && <div aria-hidden="true">{renderFish(false)}</div>}
+        {!freed && puffLayer}
 
         {cracks.length > 0 && (
           <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full">
@@ -705,7 +967,9 @@ export function FishTank() {
         createPortal(
           <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
             {foodLayer}
+            {bubbleLayer}
             {renderFish(true)}
+            {puffLayer}
           </div>,
           document.body,
         )}

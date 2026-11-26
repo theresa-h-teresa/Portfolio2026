@@ -8,6 +8,7 @@ import { JobMamaCard } from './projects/cards/JobMamaCard'
 import { ChangiCard } from './projects/cards/ChangiCard'
 import { CurioCard } from './projects/cards/CurioCard'
 import { PortfolioCard } from './projects/cards/PortfolioCard'
+import { FrankyCard } from './projects/cards/FrankyCard'
 
 function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () => void }) {
   const Wrapper = onOpenCard ? 'button' : item.href ? 'a' : 'div'
@@ -56,6 +57,7 @@ const detailCards: Record<string, ComponentType<{ onClose: () => void }>> = {
   'Singapore Changi Airport': ChangiCard,
   Curio: CurioCard,
   'teresafang.net': PortfolioCard,
+  Franky: FrankyCard,
 }
 
 export function Projects() {
@@ -63,7 +65,7 @@ export function Projects() {
   const ActiveCardComponent = openCard ? detailCards[openCard] : null
 
   return (
-    <section id="projects" className="scroll-mt-4 flex flex-col gap-6 pt-8 pb-12 md:pt-10 md:pb-16">
+    <section id="projects" className="scroll-mt-4 flex flex-col gap-6 pt-8 pb-10 lg:pt-10 lg:pb-16">
       <p className="font-mono text-sm text-ink/60">UI/UX & ENGINEERING PROJECTS</p>
       {projects.map((item) => {
         const hasDetailCard = item.title in detailCards
