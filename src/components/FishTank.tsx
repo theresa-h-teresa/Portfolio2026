@@ -6,8 +6,8 @@ import { BETTA } from '../data/bettaSprite'
 
 // A fish tank banner with bettas cut out of my painting (each a random size).
 //
-// - The banner is a window into a larger tank: fish wander through a world wider and
-//   taller than the frame, so they drift in and out of view instead of hitting walls.
+// - Before it breaks, the tank holds just three painted bettas, kept fully inside the
+//   frame. They wander, turn, and keep some distance from each other.
 // - Hovering shows an orange ring around the cursor. Clicking drops a pellet of food;
 //   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
 //   uneaten food sinks and dissolves after a while.
@@ -109,12 +109,21 @@ interface Bounds {
   maxY: number
 }
 
+const MAX_TILT = 0.35 // radians a fish tilts up or down while swimming
 const rand = (a: number, b: number) => a + Math.random() * (b - a)
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 
-/** The tank world extends well past the visible window on every side. */
-function tankWorld(w: number, h: number): Bounds {
-  return { minX: -0.6 * w, maxX: 1.6 * w, minY: -0.25 * h, maxY: 1.25 * h }
+/** Inside the intact tank, where a fish's centre may go so its whole body stays in view. */
+function insideTank(f: Fish, w: number, h: number): Bounds {
+  // Size of the fish's box when tilted as far as it can go, plus a little for the tail beat.
+  const w0 = f.width
+  const h0 = f.width * f.aspect
+  const pad = 3
+  const halfW = (w0 * Math.cos(MAX_TILT) + h0 * Math.sin(MAX_TILT)) / 2 + pad
+  const halfH = (h0 * Math.cos(MAX_TILT) + w0 * Math.sin(MAX_TILT)) / 2 + pad
+  const xs = halfW <= w - halfW ? [halfW, w - halfW] : [w / 2, w / 2]
+  const ys = halfH <= h - halfH ? [halfH, h - halfH] : [h / 2, h / 2]
+  return { minX: xs[0], maxX: xs[1], minY: ys[0], maxY: ys[1] }
 }
 /** Once free, the fish roam the whole viewport (and a little past it). */
 function screenWorld(): Bounds {
@@ -124,14 +133,14 @@ function screenWorld(): Bounds {
 }
 
 function pickTarget(f: Fish, world: Bounds, view: { w: number; h: number }, others: Fish[] = []) {
-  // Mostly aim somewhere visible, sometimes off into the unseen part of the tank.
-  // Try a few spots and keep the one farthest from where the other fish are and are
+  // Mostly aim somewhere visible, sometimes into the rest of the world (once free,
+  // that includes just off screen). Targets always land inside `world`. Try a few spots and keep the one farthest from where the other fish are and are
   // heading, so the school spreads out instead of piling up.
   let best = { x: 0, y: 0, score: -Infinity }
   for (let i = 0; i < 6; i++) {
     const visible = Math.random() < 0.65
-    const x = visible ? rand(0.1 * view.w, 0.9 * view.w) : rand(world.minX, world.maxX)
-    const y = visible ? rand(0.2 * view.h, 0.8 * view.h) : rand(world.minY, world.maxY)
+    const x = clamp(visible ? rand(0.1 * view.w, 0.9 * view.w) : rand(world.minX, world.maxX), world.minX, world.maxX)
+    const y = clamp(visible ? rand(0.2 * view.h, 0.8 * view.h) : rand(world.minY, world.maxY), world.minY, world.maxY)
     let score = Infinity
     for (const o of others) {
       if (o === f) continue
@@ -177,7 +186,7 @@ function fishTransform(f: Fish, reduced: boolean) {
   const h = f.width * f.aspect
   const s = f.face
   // Tilt the head up or down with the swim direction (head is on the left when s > 0).
-  const tilt = clamp(-Math.sign(s || 1) * Math.atan2(f.vy, Math.abs(f.vx) + 8), -0.35, 0.35)
+  const tilt = clamp(-Math.sign(s || 1) * Math.atan2(f.vy, Math.abs(f.vx) + 8), -MAX_TILT, MAX_TILT)
   // A gentle tail beat: the body flexes a little, faster when swimming fast.
   const beat = reduced ? 0 : Math.sin(f.phase)
   const sx = s * (1 + 0.025 * beat)
@@ -321,30 +330,33 @@ export function FishTank() {
       const el = tankRef.current
       return { w: el?.clientWidth ?? 600, h: el?.clientHeight ?? TANK_HEIGHT }
     }
-    const world = () => {
-      const v = viewSize()
-      return phaseRef.current === 'intact' ? tankWorld(v.w, v.h) : screenWorld()
-    }
+    // Where each fish may swim: inside the tank while it's intact, the screen once free.
+    const boundsFor = (f: Fish, v: { w: number; h: number }) =>
+      phaseRef.current === 'intact' ? insideTank(f, v.w, v.h) : screenWorld()
     // Start every fish inside the visible window, then let them wander.
     const startView = viewSize()
     fish.current.forEach((f) => {
+      const b = boundsFor(f, startView)
       if (phaseRef.current === 'intact') {
-        f.x = rand(0.2, 0.8) * startView.w
-        f.y = rand(0.3, 0.7) * startView.h
+        f.x = rand(b.minX, b.maxX)
+        f.y = rand(b.minY, b.maxY)
       }
-      pickTarget(f, world(), startView, fish.current)
+      pickTarget(f, b, startView, fish.current)
+      // Draw them in their starting spots right away, not on the first frame.
+      const el = fishEls.current[fish.current.indexOf(f)]
+      if (el) el.style.transform = fishTransform(f, reduced)
     })
 
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
       const view = viewSize()
-      const bounds = world()
       const pellets = food.current
 
       // While the tank is intact only its own fish swim (and space themselves out).
       const active = phaseRef.current === 'intact' ? fish.current.filter((f) => !f.onlyFree) : fish.current
       for (const f of active) {
+        const bounds = boundsFor(f, view)
         // Head for the nearest food if there is any, otherwise wander.
         let target: { x: number; y: number } | null = null
         let speed = WANDER_SPEED
@@ -458,9 +470,10 @@ export function FishTank() {
     const tank = tankRef.current
     const rect = tank?.getBoundingClientRect()
     for (const f of fish.current) {
-      // Bring each fish back into the tank, starting just outside the window.
-      f.x = rand(-0.4, 1.4) * (rect?.width ?? 600)
-      f.y = rand(0.2, 0.8) * TANK_HEIGHT
+      // Put each fish back somewhere inside the tank.
+      const b = insideTank(f, rect?.width ?? 600, rect?.height ?? TANK_HEIGHT)
+      f.x = rand(b.minX, b.maxX)
+      f.y = rand(b.minY, b.maxY)
       f.vx = 0
       f.vy = 0
     }
