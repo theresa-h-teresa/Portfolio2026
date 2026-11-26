@@ -19,7 +19,7 @@ function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () 
         : item.href
           ? { href: item.href, target: '_blank', rel: 'noreferrer' }
           : {})}
-      className={`group flex w-full flex-col gap-4 rounded-[10px] p-6 text-left no-underline transition-colors duration-200 hover:bg-highlight-bg md:flex-row ${onOpenCard || item.href ? 'cursor-pointer' : ''}`}
+      className={`group flex w-full flex-col gap-4 rounded-[10px] border border-ink p-6 text-left no-underline transition-colors duration-200 hover:bg-highlight-bg md:flex-row ${onOpenCard || item.href ? 'cursor-pointer' : ''}`}
     >
       {item.thumbnail ? (
         <img
@@ -63,7 +63,7 @@ export function Projects() {
   const ActiveCardComponent = openCard ? detailCards[openCard] : null
 
   return (
-    <section id="projects" className="scroll-mt-[92px] flex flex-col gap-6 pt-8 pb-12 md:pt-10 md:pb-16">
+    <section id="projects" className="scroll-mt-4 flex flex-col gap-6 pt-8 pb-12 md:pt-10 md:pb-16">
       <p className="font-mono text-sm text-ink/60">UI/UX & ENGINEERING PROJECTS</p>
       {projects.map((item) => {
         const hasDetailCard = item.title in detailCards

@@ -1,7 +1,6 @@
 import { useState, type ComponentType } from 'react'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { type JournalismCardKey } from '../data/journalism'
-import { withBase } from '../lib/url'
 import { WorkSamples } from './journalism/WorkSamples'
 import { PortfolioDropdown } from './journalism/PortfolioDropdown'
 import { AboutMeCard } from './journalism/cards/AboutMeCard'
@@ -31,7 +30,7 @@ export function Journalism() {
   const ActiveCardComponent = activeCard ? cardComponents[activeCard] : null
 
   return (
-    <section id="journalism" className="scroll-mt-[92px] pt-8 pb-12 md:pt-10 md:pb-16">
+    <section id="journalism" className="scroll-mt-4 pt-8 pb-12 md:pt-10 md:pb-16">
       <p className="mb-6 font-mono text-sm text-ink/60">JOURNALISM</p>
       <div className="mb-4 flex items-start gap-8 font-mono text-xs leading-relaxed text-ink">
         <ArrowRight className="mt-0.5 size-4 shrink-0" />
@@ -42,16 +41,6 @@ export function Journalism() {
         <WorkSamples />
         <PortfolioDropdown onSelect={setActiveCard} />
       </div>
-
-      <a
-        href={withBase('/Fang_Resume_Journalism.pdf')}
-        target="_blank"
-        rel="noreferrer"
-        className="group flex w-fit cursor-pointer items-center gap-1 font-mono text-xs text-ink-soft"
-      >
-        <span className="underline-offset-2 group-hover:underline">View Full Journalism Resume</span>
-        <ArrowUpRight className="size-3 rotate-45" />
-      </a>
 
       {ActiveCardComponent && <ActiveCardComponent onClose={() => setActiveCard(null)} />}
     </section>

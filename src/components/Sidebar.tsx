@@ -12,7 +12,7 @@ export function Sidebar() {
     // align-items: stretch), giving the inner sticky wrapper room to travel
     // across the full scroll instead of unsticking almost immediately.
     <aside className="md:w-[563px] md:shrink-0">
-      <div className="flex flex-col gap-8 pt-12 pb-24 md:sticky md:top-[92px] md:pt-16 md:pb-32">
+      <div className="flex flex-col gap-8 pt-12 pb-24 md:sticky md:top-0 md:pt-16 md:pb-32">
         <div className="inline-flex w-fit items-center gap-2 rounded-full border border-ink bg-pill-bg px-4 py-1.5">
           <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-75" />

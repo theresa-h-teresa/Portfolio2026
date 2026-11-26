@@ -2,7 +2,7 @@ const linkClass = 'font-normal text-accent-light underline-offset-2 hover:underl
 
 export function About() {
   return (
-    <section id="about" className="scroll-mt-[92px] py-12 font-display text-base font-light leading-relaxed text-ink md:py-16">
+    <section id="about" className="scroll-mt-4 py-12 font-display text-base font-light leading-relaxed text-ink md:py-16">
       <p className="mb-6 font-mono text-sm text-ink/60">ABOUT</p>
       <p className="mb-4">
         Hi! I’m Teresa, a product builder, researcher, and designer interested in creating human-centered

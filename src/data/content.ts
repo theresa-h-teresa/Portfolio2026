@@ -15,7 +15,6 @@ export const hero = {
     github: 'https://github.com/theresa-h-teresa',
     linkedin: 'https://www.linkedin.com/in/teresa-fang-5b2926284/',
   },
-  resumeHref: '/Fang_Resume_General_2026.pdf',
 }
 
 export type SkillPill = string
