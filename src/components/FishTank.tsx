@@ -8,6 +8,7 @@ import { BETTA } from '../data/bettaSprite'
 //
 // - Before it breaks, the tank holds just three painted bettas, kept fully inside the
 //   frame. They wander, turn, and keep some distance from each other.
+// - A "don't tap the glass!" caption sits under the tank; its letters fall when it breaks.
 // - Hovering shows an orange ring around the cursor. Clicking drops a pellet of food;
 //   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
 //   uneaten food sinks and dissolves after a while.
@@ -48,13 +49,14 @@ const ASCII_GREEN = '#2f7d52' // matches the seabed's algae
 const TANK_HEIGHT = 260
 
 const WANDER_SPEED = 38 // px/s
-const CHASE_SPEED = 120
+const CHASE_SPEED = 230 // fish dart for food much faster than they wander
 const FOOD_SINK = 12 // px/s
 const FOOD_LIFE = 12_000 // ms before uneaten food dissolves
 const FOOD_SPACING = 16 // px between pellets when dragging
 const SPAM_WINDOW = 2500 // ms
 const CRACK_AT = 6 // clicks inside the window before the glass starts cracking
 const SHATTER_AT = 12 // ...and before it shatters
+const CAPTION = "don't tap the glass!"
 const PERSONAL_SPACE = 0.6 // fish keep about this many (summed) widths apart
 const SEPARATION_SPEED = 160 // px/s of push away from a fish that is too close
 
@@ -275,6 +277,9 @@ export function FishTank() {
   const clicks = useRef<number[]>([])
   const dragging = useRef<{ x: number; y: number } | null>(null)
   const phaseRef = useRef<Phase>('intact')
+  const letterFall = useRef(
+    [...CAPTION].map(() => ({ dx: rand(-60, 60), rot: rand(-220, 220), delay: rand(0, 0.35) })),
+  )
 
   const [phase, setPhase] = useState<Phase>('intact')
   const [cracks, setCracks] = useState<Crack[]>([])
@@ -380,7 +385,7 @@ export function FishTank() {
         const dy = target.y - f.y
         const dist = Math.hypot(dx, dy) || 1
         const want = Math.min(speed, dist * 2.5)
-        const steer = Math.min(1, dt * (pellets.length ? 2.6 : 1.1))
+        const steer = Math.min(1, dt * (pellets.length ? 4 : 1.1))
         // Keep some distance from the other fish (gentler when racing for food).
         const sep = separation(f, active)
         const sepSpeed = SEPARATION_SPEED * (pellets.length ? 0.5 : 1)
@@ -672,6 +677,28 @@ export function FishTank() {
           className="pointer-events-none absolute left-0 top-0 z-20 size-7 rounded-full border-2 border-accent opacity-0 transition-opacity duration-150"
         />
       </div>
+
+      {/* The warning under the tank. When the glass shatters, its letters fall too. */}
+      <p aria-label={CAPTION} className="mt-2 font-mono text-xs text-ink/60 select-none">
+        {[...CAPTION].map((ch, i) => (
+          <span
+            key={i}
+            aria-hidden="true"
+            className={`inline-block ${freed ? 'tank-letter-fall' : ''}`}
+            style={
+              freed
+                ? ({
+                    '--dx': `${letterFall.current[i].dx}px`,
+                    '--rot': `${letterFall.current[i].rot}deg`,
+                    animationDelay: `${letterFall.current[i].delay}s`,
+                  } as React.CSSProperties)
+                : undefined
+            }
+          >
+            {ch === ' ' ? <>&nbsp;</> : ch}
+          </span>
+        ))}
+      </p>
 
       {/* Freed fish (painted and ASCII) roam over the whole page, with their food. */}
       {freed &&

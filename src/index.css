@@ -156,3 +156,19 @@ body {
     animation: none;
   }
 }
+
+/* ...and so do the letters of the "don't tap the glass!" caption. */
+.tank-letter-fall {
+  animation: tank-letter-fall 1.5s cubic-bezier(0.45, 0, 0.8, 0.6) both;
+}
+
+@keyframes tank-letter-fall {
+  from {
+    transform: none;
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), 70vh) rotate(var(--rot));
+    opacity: 0;
+  }
+}
