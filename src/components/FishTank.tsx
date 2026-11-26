@@ -4,7 +4,7 @@ import { withBase } from '../lib/url'
 import { setTankBroken } from '../lib/tankStore'
 import { BETTA } from '../data/bettaSprite'
 
-// A fish tank banner with three bettas cut out of my painting.
+// A fish tank banner with bettas cut out of my painting (each a random size).
 //
 // - The banner is a window into a larger tank: fish wander through a world wider and
 //   taller than the frame, so they drift in and out of view instead of hitting walls.
@@ -13,8 +13,9 @@ import { BETTA } from '../data/bettaSprite'
 //   uneaten food sinks and dissolves after a while.
 // - Clicking too fast cracks the glass, and then it shatters: the shards fall, the
 //   water floods out across the page (turning the background blue), and the fish swim
-//   free over the whole screen, joined by three orange ASCII bettas (from the ASCII
-//   version of the painting) that only appear once the tank is broken. You can keep
+//   free over the whole screen, joined by three more painted bettas and three orange and
+//   three green ASCII ones (from the ASCII version of the painting) that only appear once the tank
+//   is broken. Fish keep some distance from each other instead of piling up. You can keep
 //   feeding them: click or drag anywhere on the page (outside links and buttons).
 //   "Refill the tank" puts everything back.
 
@@ -42,6 +43,8 @@ const ASCII_MOUTH = (() => {
   return { x: col / ASCII_COLS, y: (rows.reduce((a, b) => a + b, 0) / rows.length + 0.5) / ASCII_ROWS }
 })()
 const TANK_BLUE = '#a9d2e6'
+const ASCII_ORANGE = '#e36c18' // the site's accent
+const ASCII_GREEN = '#2f7d52' // matches the seabed's algae
 const TANK_HEIGHT = 260
 
 const WANDER_SPEED = 38 // px/s
@@ -52,6 +55,8 @@ const FOOD_SPACING = 16 // px between pellets when dragging
 const SPAM_WINDOW = 2500 // ms
 const CRACK_AT = 6 // clicks inside the window before the glass starts cracking
 const SHATTER_AT = 12 // ...and before it shatters
+const PERSONAL_SPACE = 0.6 // fish keep about this many (summed) widths apart
+const SEPARATION_SPEED = 160 // px/s of push away from a fish that is too close
 
 interface Fish {
   x: number // centre, in the current world's coordinates
@@ -63,7 +68,9 @@ interface Fish {
   tx: number // wander target
   ty: number
   phase: number
-  ascii: boolean // ASCII betta: only shown once the tank is broken
+  ascii: boolean // drawn as the ASCII betta instead of the painting
+  onlyFree: boolean // hidden inside the tank; joins in once it breaks
+  color: string // text colour for ASCII fish
   aspect: number // height / width
   mouth: { x: number; y: number } // fractions of the sprite (facing left)
 }
@@ -116,11 +123,49 @@ function screenWorld(): Bounds {
   return { minX: -0.15 * w, maxX: 1.15 * w, minY: 0.05 * h, maxY: 0.95 * h }
 }
 
-function pickTarget(f: Fish, world: Bounds, view: { w: number; h: number }) {
+function pickTarget(f: Fish, world: Bounds, view: { w: number; h: number }, others: Fish[] = []) {
   // Mostly aim somewhere visible, sometimes off into the unseen part of the tank.
-  const visible = Math.random() < 0.65
-  f.tx = visible ? rand(0.1 * view.w, 0.9 * view.w) : rand(world.minX, world.maxX)
-  f.ty = visible ? rand(0.2 * view.h, 0.8 * view.h) : rand(world.minY, world.maxY)
+  // Try a few spots and keep the one farthest from where the other fish are and are
+  // heading, so the school spreads out instead of piling up.
+  let best = { x: 0, y: 0, score: -Infinity }
+  for (let i = 0; i < 6; i++) {
+    const visible = Math.random() < 0.65
+    const x = visible ? rand(0.1 * view.w, 0.9 * view.w) : rand(world.minX, world.maxX)
+    const y = visible ? rand(0.2 * view.h, 0.8 * view.h) : rand(world.minY, world.maxY)
+    let score = Infinity
+    for (const o of others) {
+      if (o === f) continue
+      score = Math.min(score, Math.hypot(x - o.x, y - o.y), Math.hypot(x - o.tx, y - o.ty))
+    }
+    if (score > best.score) best = { x, y, score }
+  }
+  f.tx = best.x
+  f.ty = best.y
+}
+
+/** A push away from every fish that is inside this one's personal space. */
+function separation(f: Fish, others: Fish[]) {
+  let sx = 0
+  let sy = 0
+  for (const o of others) {
+    if (o === f) continue
+    let dx = f.x - o.x
+    let dy = f.y - o.y
+    let d = Math.hypot(dx, dy)
+    const minD = (f.width + o.width) * PERSONAL_SPACE
+    if (d >= minD) continue
+    if (d < 0.5) {
+      // Exactly on top of each other: split in a random direction.
+      const a = Math.random() * Math.PI * 2
+      dx = Math.cos(a)
+      dy = Math.sin(a)
+      d = 1
+    }
+    const push = (minD - d) / minD // 0 at the edge of personal space, 1 when touching
+    sx += (dx / d) * push
+    sy += (dy / d) * push * 1.3 // spread out vertically a little more, like a school
+  }
+  return { x: sx, y: sy }
 }
 
 function mouthOf(f: Fish) {
@@ -233,15 +278,23 @@ export function FishTank() {
   // Seed three painted fish of different sizes, plus three ASCII ones that stay hidden
   // in the tank until it breaks.
   if (fish.current.length === 0) {
+    const painted = (onlyFree: boolean) => ({ width: Math.round(rand(58, 118)), ascii: false, onlyFree, color: '' })
+    const asciiFish = (color: string) => ({ width: Math.round(rand(100, 185)), ascii: true, onlyFree: true, color })
     const kinds = [
-      { width: 104, ascii: false },
-      { width: 84, ascii: false },
-      { width: 70, ascii: false },
-      { width: 150, ascii: true },
-      { width: 128, ascii: true },
-      { width: 110, ascii: true },
+      painted(false),
+      painted(false),
+      painted(false), // in the tank from the start
+      painted(true),
+      painted(true),
+      painted(true), // more painted fish that join once the tank breaks
+      asciiFish(ASCII_ORANGE),
+      asciiFish(ASCII_ORANGE),
+      asciiFish(ASCII_ORANGE),
+      asciiFish(ASCII_GREEN),
+      asciiFish(ASCII_GREEN),
+      asciiFish(ASCII_GREEN),
     ]
-    fish.current = kinds.map(({ width, ascii }, i) => ({
+    fish.current = kinds.map(({ width, ascii, onlyFree, color }, i) => ({
       x: rand(0.1, 0.9) * 600,
       y: rand(0.3, 0.7) * TANK_HEIGHT,
       vx: (i % 2 ? 1 : -1) * WANDER_SPEED,
@@ -252,6 +305,8 @@ export function FishTank() {
       ty: 0,
       phase: rand(0, Math.PI * 2),
       ascii,
+      onlyFree,
+      color,
       aspect: ascii ? ASCII_ASPECT : FISH_ASPECT,
       mouth: ascii ? ASCII_MOUTH : MOUTH,
     }))
@@ -277,7 +332,7 @@ export function FishTank() {
         f.x = rand(0.2, 0.8) * startView.w
         f.y = rand(0.3, 0.7) * startView.h
       }
-      pickTarget(f, world(), startView)
+      pickTarget(f, world(), startView, fish.current)
     })
 
     const tick = (now: number) => {
@@ -287,7 +342,9 @@ export function FishTank() {
       const bounds = world()
       const pellets = food.current
 
-      for (const f of fish.current) {
+      // While the tank is intact only its own fish swim (and space themselves out).
+      const active = phaseRef.current === 'intact' ? fish.current.filter((f) => !f.onlyFree) : fish.current
+      for (const f of active) {
         // Head for the nearest food if there is any, otherwise wander.
         let target: { x: number; y: number } | null = null
         let speed = WANDER_SPEED
@@ -304,7 +361,7 @@ export function FishTank() {
           speed = CHASE_SPEED
         }
         if (!target) {
-          if (Math.hypot(f.tx - f.x, f.ty - f.y) < 30) pickTarget(f, bounds, view)
+          if (Math.hypot(f.tx - f.x, f.ty - f.y) < 30) pickTarget(f, bounds, view, active)
           target = { x: f.tx, y: f.ty }
         }
         const dx = target.x - f.x
@@ -312,8 +369,11 @@ export function FishTank() {
         const dist = Math.hypot(dx, dy) || 1
         const want = Math.min(speed, dist * 2.5)
         const steer = Math.min(1, dt * (pellets.length ? 2.6 : 1.1))
-        f.vx += ((dx / dist) * want - f.vx) * steer
-        f.vy += ((dy / dist) * want * 0.75 - f.vy) * steer
+        // Keep some distance from the other fish (gentler when racing for food).
+        const sep = separation(f, active)
+        const sepSpeed = SEPARATION_SPEED * (pellets.length ? 0.5 : 1)
+        f.vx += ((dx / dist) * want + sep.x * sepSpeed - f.vx) * steer
+        f.vy += ((dy / dist) * want * 0.75 + sep.y * sepSpeed - f.vy) * steer
         f.x = clamp(f.x + f.vx * dt, bounds.minX, bounds.maxX)
         f.y = clamp(f.y + f.vy * dt, bounds.minY, bounds.maxY)
 
@@ -380,7 +440,7 @@ export function FishTank() {
       f.y += rect.top
       f.vx *= 2.2
       f.vy = rand(-60, 60)
-      pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight })
+      pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight }, fish.current)
     }
     food.current = []
     dragging.current = null
@@ -469,7 +529,9 @@ export function FishTank() {
   // Keep the freed fish inside the new world if the window is resized.
   useEffect(() => {
     if (!freed) return
-    const onResize = () => fish.current.forEach((f) => pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight }))
+    const onResize = () => fish.current.forEach((f) =>
+        pickTarget(f, screenWorld(), { w: window.innerWidth, h: window.innerHeight }, fish.current),
+      )
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [freed])
@@ -515,9 +577,9 @@ export function FishTank() {
   }, [phase])
 
   // Painted fish are images; ASCII fish are monospace text sized to the fish width.
-  const renderFish = (includeAscii: boolean) =>
+  const renderFish = (includeFreeOnly: boolean) =>
     fish.current.map((f, i) => {
-      if (f.ascii && !includeAscii) return null
+      if (f.onlyFree && !includeFreeOnly) return null
       const setRef = (el: HTMLElement | null) => {
         fishEls.current[i] = el
       }
@@ -526,8 +588,8 @@ export function FishTank() {
       return f.ascii ? (
         <div key={i} ref={setRef} className={className} style={style}>
           <pre
-            className="m-0 font-mono text-accent"
-            style={{ fontSize: f.width / (ASCII_COLS * ASCII_CHAR_EM), lineHeight: ASCII_LINE_EM }}
+            className="m-0 font-mono"
+            style={{ color: f.color, fontSize: f.width / (ASCII_COLS * ASCII_CHAR_EM), lineHeight: ASCII_LINE_EM }}
           >
             {ASCII_ART}
           </pre>
