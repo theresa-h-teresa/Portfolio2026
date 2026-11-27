@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react'
+import { ArrowUpRight } from 'lucide-react'
+import { hero } from '../data/content'
+import { withBase } from '../lib/url'
 
 const linkClass = 'font-normal text-accent-light underline-offset-2 hover:underline'
 
@@ -49,6 +52,16 @@ export function About() {
         <ExtLink href="https://www.youtube.com/@teresazfang">make documentaries</ExtLink>, paint, hike, and spend more
         time than I planned looking for the right blocks in Minecraft.
       </p>
+
+      <a
+        href={withBase(hero.resumeHref)}
+        target="_blank"
+        rel="noreferrer"
+        className="group mt-8 flex w-fit items-center gap-1 font-mono text-xs font-normal text-ink-soft"
+      >
+        <span className="underline-offset-2 group-hover:underline">View Full Resume</span>
+        <ArrowUpRight className="size-3 rotate-45" />
+      </a>
     </section>
   )
 }
