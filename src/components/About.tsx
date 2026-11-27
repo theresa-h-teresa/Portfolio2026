@@ -1,55 +1,53 @@
+import type { ReactNode } from 'react'
+
 const linkClass = 'font-normal text-accent-light underline-offset-2 hover:underline'
+
+function ExtLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={linkClass}>
+      {children}
+    </a>
+  )
+}
 
 export function About() {
   return (
     <section id="about" className="scroll-mt-4 py-10 font-display text-base font-light leading-relaxed text-ink lg:py-16">
       <p className="mb-6 font-mono text-sm text-ink/60">ABOUT</p>
       <p className="mb-4">
-        Hi! I’m Teresa, a product builder, researcher, and designer interested in creating human-centered
-        technology. I enjoy turning complex problems into products and experiences that are useful, intuitive, and
-        grounded in real user needs—especially where technology, creativity, and community intersect.
+        Hi! I’m Teresa, a product builder and researcher studying Computer Science, Economics, and Journalism at
+        Northwestern University. I’m currently a product manager and designer for{' '}
+        <ExtLink href="https://curioreceipt.com/">Curio</ExtLink>, a museum-visit companion app we’re building through{' '}
+        <ExtLink href="https://www.thegarage.northwestern.edu/">The Garage at Northwestern</ExtLink>’s Jumpstart
+        Program. I lead the app’s design system and plan its initial iOS release.
       </p>
       <p className="mb-4">
-        Currently, I’m a Research Assistant at Northwestern’s{' '}
-        <a href="https://www.creativeinterfaces.northwestern.edu/" target="_blank" rel="noreferrer" className={linkClass}>
-          Creative Interfaces Research + Design Studio
-        </a>
-        , where I lead early-stage product discovery and participatory design workshops exploring how artists work with
-        AI-assisted creative tools. Before that, I was a Product and UX Research Assistant at Georgia Tech’s{' '}
-        <a href="https://expressivemachinery.gatech.edu/" target="_blank" rel="noreferrer" className={linkClass}>
-          Expressive Machinery Lab
-        </a>
-        , where I worked across product, design, and engineering to build interactive authoring tools and
-        experiences—translating user and stakeholder research into product requirements, prototyping new
-        interactions, and collaborating with researchers, engineers, and designers.
+        As a research assistant at Northwestern’s{' '}
+        <ExtLink href="https://www.creativeinterfaces.northwestern.edu/">Creative Interfaces Research + Design Studio</ExtLink>
+        , I lead early-stage product discovery and plan participatory design workshops exploring how artists use
+        AI-assisted creative tools. Before Northwestern, I studied Computational Media at Georgia Tech and worked at
+        the <ExtLink href="https://expressivemachinery.gatech.edu/">Expressive Machinery Lab</ExtLink>, where I
+        translated user research into product requirements and prototyped interactions for creative authoring tools.
       </p>
       <p className="mb-4">
-        My background also spans{' '}
-        <a href="https://nique.net/author/Teresa%20Fang" target="_blank" rel="noreferrer" className={linkClass}>
-          journalism
-        </a>
-        , civic leadership, and community research. From leading a student{' '}
+        <ExtLink href="https://nique.net/author/Teresa%20Fang">Journalism</ExtLink> taught me how to ask better
+        questions. I’ve led a student{' '}
         <a href="#journalism" className={linkClass}>
           newsroom
         </a>{' '}
-        to{' '}
-        <a href="https://atlpresscollective.com/author/teresa-fang/" target="_blank" rel="noreferrer" className={linkClass}>
-          reporting on infrastructure and transportation
-        </a>{' '}
-        in metro Atlanta, I’ve learned to ask good questions, work across different perspectives, and understand
-        the people and systems behind a problem. That perspective shapes how I approach product discovery and
-        decision-making.
-      </p>
-      <p className="mb-4">
-        I’m currently triple-majoring in Computer Science, Economics, and Journalism at Northwestern University,
-        after beginning my undergraduate studies in Computational Media at Georgia Tech.
+        and{' '}
+        <ExtLink href="https://atlpresscollective.com/author/teresa-fang/">
+          reported on transportation and infrastructure
+        </ExtLink>{' '}
+        in metro Atlanta. I also help pitch{' '}
+        <ExtLink href="https://news.northwestern.edu/">Northwestern news and research</ExtLink> to the press as a
+        Media Relations Associate. Those experiences shape how I interview users and make sense of competing
+        priorities.
       </p>
       <p>
-        In my spare time, you can usually find me{' '}
-        <a href="https://www.youtube.com/@teresazfang" target="_blank" rel="noreferrer" className={linkClass}>
-          making documentaries
-        </a>
-        , painting, hiking, cafe-hopping, or running around Minecraft looking for the best blocks for my next build.
+        Outside of class and work, I{' '}
+        <ExtLink href="https://www.youtube.com/@teresazfang">make documentaries</ExtLink>, paint, hike, and spend more
+        time than I planned looking for the right blocks in Minecraft.
       </p>
     </section>
   )
