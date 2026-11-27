@@ -50,8 +50,8 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           garnered thousands of views on their own. Of the top posts of all time on our site, I authored the top
           three (excluding the Home page and News & Features page).
         </JP>
-        <JImage src="/journalism/marketing-image-32.png" className="w-full" />
-        <JImage src="/journalism/marketing-image-33.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-32.png" alt="A chart of The Stentorian website’s total views by month." className="w-full" />
+        <JImage src="/journalism/marketing-image-33.png" alt="A list of the website’s most-viewed posts and pages." className="w-full" />
         <p className="font-display text-base font-medium text-ink">Instagram</p>
         <JP>
           After identifying social media presence as a priority, I was first designated as the Multimedia Editor in
@@ -66,7 +66,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           2023-24 school year in our special Commencement Issue. Parents reported to me that they really appreciated
           getting to read the statistics of where the senior class went around the world.
         </JP>
-        <JImage src="/journalism/marketing-image-34.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-34.png" alt="Instagram insights for the post on Class of 2024 college acceptances." className="w-full" />
       </JSection>
 
       <JSection id="audience-engagement" heading="Audience Engagement">
@@ -77,7 +77,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           click on the post of the story they would like to read. This then leads them to the story on our online
           site.
         </JP>
-        <JImage src="/journalism/marketing-image-35.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-35.png" alt="A social media scheduling grid and The Stentorian’s Instagram profile." className="w-full" />
         <JP>
           The website is designed in a way that prioritizes 1) timely news or community-centric articles and 2) most
           popular reads. This is why when you first open our website, you will see on the homepage stories that are
@@ -85,7 +85,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           has an influx of and high tendency to write. We also have the latest broadcast segment for easy access to
           multimedia news.
         </JP>
-        <JImage src="/journalism/marketing-image-36.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-36.png" alt="The Stentorian website’s front page of stories." className="w-full" />
         <JP>
           In the image above, the rightmost column is our sidebar. First, to promote our written content, I manually
           built a "trending stories" widget to allow users to click through the most popular stories published in
@@ -107,18 +107,18 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           We have incorporated interactive elements such as QR codes and our page of crosswords and custom puzzles to
           better engage students, then hooking them onto our other stories as well.
         </JP>
-        <JImage src="/journalism/marketing-image-37.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-37.png" alt="A print issue on screen, and stacks of printed newspapers ready to distribute." className="w-full" />
       </JSection>
 
       <JSection id="business" heading="Business">
-        <JImage src="/journalism/marketing-image-38.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-38.png" alt="The editorial policies manual open in Google Docs with its section outline." className="w-full" />
         <JP>
           In the same month, after my editorial board and I reviewed the document thoroughly over a series of
           in-person and virtual team meetings, I added these policies in a readable form on the{' '}
           submissions page of our newspaper
           website.
         </JP>
-        <JImage src="/journalism/marketing-image-39.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-39.png" alt="The submissions page for student contributors." className="w-full" />
         <JP>
           I was also able to appropriately flesh out and establish{' '}
           <JLink href="https://drive.google.com/file/d/1Q_6ZSaDUh6_nmrkNM5a-M97xvNucvdZ4/view?usp=sharing">
@@ -142,7 +142,7 @@ export function MarketingCard({ onClose }: { onClose: () => void }) {
           to be printed in black-and-white or in color depending on the package a businessowner agrees to support us
           with.
         </JP>
-        <JImage src="/journalism/marketing-image-40.png" className="w-full" />
+        <JImage src="/journalism/marketing-image-40.png" alt="The Stentorian sponsorship tiers, from Bronze to Diamond, with a sponsor sign-up form." className="w-full" />
         <JP>
           In November 2024, I revised our newspaper website and built a new page for{' '}
           advertising in order to increase accessibility

@@ -76,7 +76,7 @@ export function LawEthicsCard({ onClose }: { onClose: () => void }) {
 
       <JSection id="corrections-policy" heading="Corrections Policy">
         <JP>On our website, we have a corrections policy published:</JP>
-        <JImage src="/journalism/lawethics-image-30.png" className="w-full" />
+        <JImage src="/journalism/lawethics-image-30.png" alt="The Stentorian’s corrections policy, explaining what happens when a story has a mistake." className="w-full" />
       </JSection>
 
       <JSection id="code-of-ethics" heading="Code of Ethics">
@@ -86,7 +86,7 @@ export function LawEthicsCard({ onClose }: { onClose: () => void }) {
           policy and clarified any questions. By reminding our staff of our responsibility as student journalists
           from the start, I was able to mitigate any ethics issues down the line.
         </JP>
-        <JImage src="/journalism/lawethics-image-31.png" className="w-full" />
+        <JImage src="/journalism/lawethics-image-31.png" alt="The Stentorian’s mission and ethical code." className="w-full" />
         <JP>
           Additionally, prior to the school year, I created an Editors Agreement form in which all members of the
           Stentorian editorial board were required to sign before starting in their positions. This allows us to

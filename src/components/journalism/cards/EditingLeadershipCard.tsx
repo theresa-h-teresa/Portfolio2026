@@ -48,7 +48,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           <li>Broadcast journalism</li>
           <li>and more.</li>
         </ul>
-        <JImage src="/journalism/el-image-3.png" className="w-full" />
+        <JImage src="/journalism/el-image-3.png" alt="Course modules from the journalism course created for the newsroom." className="w-full" />
         <JP>
           These materials are a combination of general journalism rules I've personally experienced or was taught and
           Stentorian-specific rules, such as the requirements for an opinion story pitch or what counts as different
@@ -99,13 +99,13 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           headline used. Thus, I would always give suggestions on headlines (with multiple options/alternatives) to
           the writer after reading their piece properly.
         </JP>
-        <JImage src="/journalism/el-image-4.png" className="w-full" />
+        <JImage src="/journalism/el-image-4.png" alt="Editing comments on the article “Pollinator Gardens Bloom With Student-Teacher Efforts.”" className="w-full" />
         <JP>
           As a journalist with scientific and humanities research experience, I know the importance of using evidence
           to support claims, or anything that the writer includes in their story. As an editor, I identify claims in
           writers' stories and factcheck them, especially for stories that mention government policies or politics.
         </JP>
-        <JImage src="/journalism/el-image-5.png" className="w-full" />
+        <JImage src="/journalism/el-image-5.png" alt="Editing comments in the draft of the pollinator garden article." className="w-full" />
         <JP>
           I'd also like to talk about the special conditions of being a writer at our STEM-focused high school. Many
           of our news, features, and opinion articles are about students' science accomplishments, scientific
@@ -118,8 +118,8 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           Additionally, to maintain an unbiased coverage in our articles about people or groups of people, we try to
           maintain the same amount of writing for each group.
         </JP>
-        <JImage src="/journalism/el-image-6.png" className="w-full" />
-        <JImage src="/journalism/el-image-7.png" className="w-full" />
+        <JImage src="/journalism/el-image-6.png" alt="A shortened print version of a research-programs article, with editor comments." className="w-full" />
+        <JImage src="/journalism/el-image-7.png" alt="Editing comments on a draft about the Research in Physics program." className="w-full" />
         <JP>
           Another key area I focus on is advantageous use of quotes. I try to reserve quotes only for opinionated
           thoughts from a source, and put into the writers' own words anything else fact-based. This strengthens the
@@ -132,7 +132,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           featured on our website. Additionally, we also have a rule of having the writer add a caption per photo
           along with photo credits.
         </JP>
-        <JImage src="/journalism/el-image-8.png" className="w-full" />
+        <JImage src="/journalism/el-image-8.png" alt="A draft article with a photo of students in a lab, plus editor comments on photo credits." className="w-full" />
         <JP>
           I established earlier in my senior year that our newspaper's editing system requires at least two editors
           per article. Sometimes, we have underclassmen who do not have prior journalism experience nor a formal
@@ -142,7 +142,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           talent, but something that is to be practiced and trained. Editing is a peer process. The beauty of editing
           (and writing, evidently so) is that anybody can be great at it!
         </JP>
-        <JImage src="/journalism/el-image-9.png" className="w-full" />
+        <JImage src="/journalism/el-image-9.png" alt="A comment thread discussing revisions with a writer." className="w-full" />
       </JSection>
 
       <JSection id="leadership" heading="Leadership (and business!)">
@@ -226,7 +226,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           and try to be as professional but friendly as possible, whether to other students or potential business
           sponsors.
         </JP>
-        <JImage src="/journalism/el-image-10.png" className="w-full" />
+        <JImage src="/journalism/el-image-10.png" alt="An email exchange with a local business about sponsoring the newspaper." className="w-full" />
         <JP>
           I'm excited to witness the current growth of The Stentorian's editorial board, online presence, and
           schoolwide and community-wide influence. I cannot wait to surprise my underclassmen next year whenever I
@@ -250,7 +250,7 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           comprised of sporadic and random work, covering topics ranging from things heard in dorms or issues on the
           other side of the planet.
         </JP>
-        <JImage src="/journalism/el-image-11.png" className="w-full" />
+        <JImage src="/journalism/el-image-11.png" alt="The first page of The Stentorian’s Editorial Policies and Operations Management Manual." className="w-full" />
         <JP>
           This year, we began to actively increase outreach toward the larger student body, even from the{' '}
           <JLink href="https://stentorianncssm.wordpress.com/2024/05/20/dean-of-humanities-elizabeth-moose-retires-after-31-years-at-ncssm/">
@@ -268,8 +268,8 @@ export function EditingLeadershipCard({ onClose }: { onClose: () => void }) {
           To write the EPOMM, I consulted NCSSM/Stentorian alumni in the journalism field. Most notably, Sellers Hill
           '20, current student at Harvard University and the 151st President of The Harvard Crimson.
         </JP>
-        <JImage src="/journalism/el-image-12.png" className="w-full" />
-        <JImage src="/journalism/el-image-13.png" className="w-full" />
+        <JImage src="/journalism/el-image-12.png" alt="A spreadsheet planning a print issue’s page layout, finances, and ad listings." className="w-full" />
+        <JImage src="/journalism/el-image-13.png" alt="The Stentorian’s submission guidelines page." className="w-full" />
         <JP>
           When I visited him at The Crimson's office in February 2024, I updated him on the state of our paper and he
           gave me suggestions on growth, editing and design rules, and tips on how to get business

@@ -46,6 +46,8 @@ export interface CaseImage {
   caption?: string
   /** Optional smaller/cropped image for the grid; the lightbox always opens `src`. */
   thumb?: string
+  /** Alt text for images without a caption (the caption is used otherwise). */
+  alt?: string
 }
 
 /** A non-image cell in the grid, e.g. a paragraph placed beside an image. */
@@ -113,7 +115,7 @@ export function ImageGrid({
           <figure key={image.src} className="m-0 flex flex-col gap-1.5">
             <img
               src={withBase(image.thumb ?? image.src)}
-              alt={image.caption ?? ''}
+              alt={image.alt ?? image.caption ?? ''}
               onClick={() => onImageClick(image)}
               className={`aspect-[8/5] w-full cursor-pointer rounded-lg transition-opacity hover:opacity-90 ${fitClass}`}
             />
@@ -157,7 +159,7 @@ export function ImageLightbox({ image, onClose }: { image: CaseImage; onClose: (
       </button>
       <img
         src={withBase(image.src)}
-        alt={image.caption ?? ''}
+        alt={image.alt ?? image.caption ?? ''}
         onClick={(e) => e.stopPropagation()}
         className="min-h-0 max-w-full flex-1 rounded-lg object-contain shadow-2xl"
       />

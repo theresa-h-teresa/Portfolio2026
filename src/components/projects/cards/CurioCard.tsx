@@ -64,7 +64,7 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
 
       <div className="flex flex-col justify-between gap-1 border-t border-ink/10 pt-4 font-display font-normal text-[#72b0c9] sm:flex-row sm:items-baseline">
         <p className="text-3xl">IN PROGRESS</p>
-        <p className="text-sm">NOV 2026-PRESENT</p>
+        <p className="text-sm">SEP 2026-PRESENT</p>
       </div>
 
       <CaseStudySection

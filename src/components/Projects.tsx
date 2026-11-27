@@ -9,6 +9,7 @@ import { ChangiCard } from './projects/cards/ChangiCard'
 import { CurioCard } from './projects/cards/CurioCard'
 import { PortfolioCard } from './projects/cards/PortfolioCard'
 import { FrankyCard } from './projects/cards/FrankyCard'
+import { GeoBindCard } from './projects/cards/GeoBindCard'
 
 function ProjectCard({ item, onOpenCard }: { item: ProjectItem; onOpenCard?: () => void }) {
   const Wrapper = onOpenCard ? 'button' : item.href ? 'a' : 'div'
@@ -58,6 +59,7 @@ const detailCards: Record<string, ComponentType<{ onClose: () => void }>> = {
   Curio: CurioCard,
   'teresafang.net': PortfolioCard,
   Franky: FrankyCard,
+  'GeoBind Cement': GeoBindCard,
 }
 
 export function Projects() {
@@ -66,7 +68,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="scroll-mt-4 flex flex-col gap-6 pt-8 pb-10 lg:pt-10 lg:pb-16">
-      <p className="font-mono text-sm text-ink/60">UI/UX & ENGINEERING PROJECTS</p>
+      <p className="font-mono text-sm text-ink/60">PRODUCT & DESIGN PROJECTS</p>
       {projects.map((item) => {
         const hasDetailCard = item.title in detailCards
         return (

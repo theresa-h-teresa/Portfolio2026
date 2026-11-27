@@ -36,7 +36,7 @@ export function PhotojournalismCard({ onClose }: { onClose: () => void }) {
           shy, I learned the importance of gathering information for captions, which I would work to improve the next
           time.
         </JP>
-        <JImage src="/journalism/photo-image-23.png" className="w-full" />
+        <JImage src="/journalism/photo-image-23.png" alt="A collage of photos from 2020 presidential campaign rallies in North Carolina." className="w-full" />
       </JSection>
 
       <JSection id="social-issues-protest" heading="Social Issues Protest">
@@ -47,11 +47,11 @@ export function PhotojournalismCard({ onClose }: { onClose: () => void }) {
           crowd, a likeminded group, which build up naturally at these events: whether that is anger, sadness, hope,
           or passion.
         </JP>
-        <JImage src="/journalism/photo-image-24.png" className="w-full" />
+        <JImage src="/journalism/photo-image-24.png" alt="A collage of photos from community rallies and outdoor gatherings." className="w-full" />
       </JSection>
 
       <JSection id="robotics-team" heading="School Robotics Team">
-        <JImage src="/journalism/photo-image-25.png" className="w-full" />
+        <JImage src="/journalism/photo-image-25.png" alt="A collage of photos from a student robotics competition." className="w-full" />
         <JP>
           Being the Chief Media Lead in my school's robotics team was the perfect opportunity to practice my indoors
           photography. The photos to the right were featured in the team's promotional video and in a newspaper
@@ -61,7 +61,7 @@ export function PhotojournalismCard({ onClose }: { onClose: () => void }) {
       </JSection>
 
       <JSection id="student-events" heading="Student Events">
-        <JImage src="/journalism/photo-image-26.png" className="w-full" />
+        <JImage src="/journalism/photo-image-26.png" alt="A collage of photos from campus events, a graduation, and a panel discussion." className="w-full" />
         <JP>
           In my photos of school events, I committed to taking pictures of the energy of the environment and its
           people. Although this proved more difficult than I thought, I shot these moments for different galleries or
@@ -75,7 +75,7 @@ export function PhotojournalismCard({ onClose }: { onClose: () => void }) {
           the right were featured in our paper's online gallery about how the theater department brought back their
           musical after the pandemic.
         </JP>
-        <JImage src="/journalism/photo-image-27.png" className="w-full" />
+        <JImage src="/journalism/photo-image-27.png" alt="A collage of photos from school theater performances." className="w-full" />
       </JSection>
 
       <JSection id="community-service" heading="Community Service">
@@ -84,7 +84,7 @@ export function PhotojournalismCard({ onClose }: { onClose: () => void }) {
           my hometown and writing a story too. This was the peak opportunity for me to practice outdoors and day
           photography, as well as impromptu, man-on-the-street interviews.
         </JP>
-        <JImage src="/journalism/photo-image-28.png" className="w-full" />
+        <JImage src="/journalism/photo-image-28.png" alt="Volunteers working on a trail cleanup project in the woods." className="w-full" />
       </JSection>
     </JournalismModalShell>
   )

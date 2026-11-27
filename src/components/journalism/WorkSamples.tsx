@@ -22,7 +22,7 @@ export function WorkSampleCard({ sample }: { sample: WorkSample }) {
       {sample.image && (
         <img
           src={withBase(sample.image)}
-          alt=""
+          alt={sample.headline}
           className="h-[123px] w-full rounded-[10px] object-cover"
         />
       )}

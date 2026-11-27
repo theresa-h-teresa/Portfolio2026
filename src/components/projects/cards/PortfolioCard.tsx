@@ -5,7 +5,7 @@ import { CaseLink, CaseStudySection, ImageLightbox, SkillGroup, type CaseImage }
 const siteHref = 'https://teresafang.net/'
 
 const tools = ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'GitHub Pages', 'Claude Code']
-const features = ['Case-Study Cards', 'Image Lightbox', 'Journalism Portfolio', 'Section Navigation', 'Hover States']
+const features = ['Interactive Fish Tank', 'Case-Study Cards', 'Image Lightbox', 'Journalism Portfolio', 'Responsive Layout', 'Link Previews']
 
 const dir = '/portfolio-case'
 
@@ -31,7 +31,7 @@ const conceptImages: CaseImage[] = [
 const finalImages: CaseImage[] = [
   {
     src: `${dir}/final-hero.jpg`,
-    caption: 'The final site: a fixed intro and section navigation beside a scrolling column.',
+    caption: 'The final site: the intro and section navigation stay put on the left, and the fish tank tops the scrolling column.',
   },
   {
     src: `${dir}/final-projects.jpg`,
@@ -42,8 +42,27 @@ const finalImages: CaseImage[] = [
     caption: 'A case-study card, which kept the dark window header and [ x ] from the concept.',
   },
   {
-    src: `${dir}/final-lightbox.jpg`,
-    caption: 'Click any case-study image to enlarge it, with a close button and caption.',
+    src: `${dir}/final-mobile.jpg`,
+    caption: 'On a phone, everything stacks into one column.',
+  },
+]
+const tankImages: CaseImage[] = [
+  {
+    src: `${dir}/tank-feeding.jpg`,
+    caption: 'Click to drop food (or drag to lay a line of it), and the bettas race for it.',
+  },
+  {
+    src: `${dir}/tank-cracked.jpg`,
+    caption: 'Double-tap the glass to crack it. Keep tapping, and at five cracks it shatters.',
+  },
+  {
+    src: `${dir}/tank-freed.jpg`,
+    caption: 'Once the tank breaks, the fish swim free across the whole page, and a seabed grows in the sidebar.',
+  },
+  {
+    src: `${dir}/concept-landing.jpg`,
+    thumb: `${dir}/concept-betta-thumb.jpg`,
+    caption: 'Where the fish came from: the betta painting in my early landing-page concept.',
   },
 ]
 
@@ -107,11 +126,38 @@ export function PortfolioCard({ onClose }: { onClose: () => void }) {
         >
           <p className={body}>
             The final site trades the freeform canvas for something faster to scan. The intro and section navigation
-            stay fixed on the left while experience, projects, and journalism scroll on the right.
+            stay on the left, while the fish tank, about, projects, and journalism scroll on the right. On tablets and
+            phones the layout stacks into a single column, and the fish shrink to fit.
           </p>
           <p className={body}>
             The window idea lives on in the case-study cards: dark headers, a [ x ] to close, and images you can
             enlarge with captions. Warm cream and burnt-orange accents carry the concept’s orange forward.
+          </p>
+          <p className={body}>
+            I also handled the parts nobody sees until they’re missing: alt text on every image, Open Graph tags so
+            links shared on LinkedIn show a preview, and a sitemap for search engines.
+          </p>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="portfolio-fish-tank"
+          heading="The Fish Tank"
+          images={tankImages}
+          onImageClick={setLightboxImage}
+        >
+          <p className={body}>
+            The bettas from my painting were in the concept from the start, so I gave them a tank at the top of the
+            page that visitors can play with. Click to drop food and the fish race for it. Tap a fish and it startles,
+            lets out a puff, and darts away.
+          </p>
+          <p className={body}>
+            Tap the glass and it cracks. Keep going, and at five cracks the tank shatters, the water floods out, and
+            the fish (plus a few new ones) swim free across the whole page. You can keep feeding them anywhere, or refill the tank to start over.
+          </p>
+          <p className={body}>
+            Under the hood it’s a small animation loop in React. Each fish steers toward food or a wander point, keeps
+            its personal space from the others, and waits a beat before turning around so it doesn’t flip back and
+            forth.
           </p>
           <div className="mt-1">
             <CaseLink href={siteHref}>Visit teresafang.net</CaseLink>

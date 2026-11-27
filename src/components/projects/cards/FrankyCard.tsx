@@ -8,7 +8,7 @@ import {
   type CaseImageInput,
 } from './CaseStudyParts'
 
-// Franky: still pre-prototype, so most visuals are labeled placeholders. To swap one in,
+// Franky: most visuals are still labeled placeholders. To swap one in,
 // drop the file into public/Franky/ and replace `{ placeholder: '…' }` with
 // `{ src: '/Franky/<file>' }` (keeping the caption).
 
@@ -26,8 +26,8 @@ const conceptImages: CaseImageInput[] = [
   { placeholder: 'Quest tokens & dock', caption: 'Physical quest tokens dropped into a dock start the quest.' },
 ]
 const nextImages: CaseImageInput[] = [
-  { placeholder: 'Prototype coming soon', caption: 'The clickable prototype and paper dock are in progress.' },
-  { placeholder: 'User testing', caption: 'First tests: 3–5 students through I Can Fly.' },
+  { placeholder: 'Functional prototype 1', caption: 'The first of two functional prototypes.' },
+  { placeholder: 'Functional prototype 2', caption: 'The second functional prototype.' },
 ]
 
 const body = 'font-display text-base leading-snug text-ink'
@@ -40,9 +40,6 @@ export function FrankyCard({ onClose }: { onClose: () => void }) {
       <JournalismModalShell title="Franky" onClose={onClose}>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="lg:max-w-sm">
-            <p className="mb-3 inline-flex rounded-full border border-accent px-3 py-1 font-mono text-xs text-accent">
-              prototype coming soon
-            </p>
             <p className={body}>
               Franky is a physical-digital focus companion for middle schoolers (ages 9–15) with ADHD. A student drops
               a quest token into a small dock, and it kicks off a short, game-like focus session for their homework,
@@ -50,7 +47,7 @@ export function FrankyCard({ onClose }: { onClose: () => void }) {
             </p>
             <p className={`mt-3 ${body}`}>
               I’m the founder and product lead. I took Franky from discovery to a defined MVP: interviewing 8 students,
-              building 3 personas, and testing 2 concepts. The clickable prototype is coming soon.
+              building 3 personas, and testing 2 concepts. Then I built two functional prototypes.
             </p>
           </div>
 
@@ -102,7 +99,7 @@ export function FrankyCard({ onClose }: { onClose: () => void }) {
 
         <CaseStudySection
           id="franky-next"
-          heading="Scoping Down & What’s Next"
+          heading="Scoping Down & Prototyping"
           images={nextImages}
           onImageClick={setLightboxImage}
         >
@@ -112,10 +109,9 @@ export function FrankyCard({ onClose }: { onClose: () => void }) {
             “dungeon master,” multiplayer quests, a parent app) are parked for later.
           </p>
           <p className={body}>
-            Next up: a clickable Figma prototype and a paper dock, tested with 3–5 students through I Can Fly. I’ll be
-            measuring time spent in focus mode, how fun they rate it, and whether they choose to start a second quest.
+            I built two functional prototypes of that loop to test with students through I Can Fly. Each test measures
+            time spent in focus mode, how fun students rate it, and whether they choose to start a second quest.
           </p>
-          <p className="mt-1 font-mono text-xs text-accent">Prototype coming soon.</p>
         </CaseStudySection>
       </JournalismModalShell>
 

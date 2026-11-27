@@ -13,7 +13,7 @@ import { BETTA } from '../data/bettaSprite'
 //   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
 //   uneaten food sinks and dissolves after a while.
 // - A quick double-tap cracks the glass; quick taps after that crack it further, and once
-//   it has eight cracks it shatters: the shards fall, the
+//   it has five cracks it shatters: the shards fall, the
 //   water floods out across the page (turning the background blue), and the fish swim
 //   free over the whole screen, joined by three orange and three green ASCII ones (from the ASCII version of the painting) that only appear once the tank
 //   is broken. Fish keep some distance from each other instead of piling up. You can keep
@@ -78,7 +78,7 @@ const PUFF_FRAMES = ['~', ' ~\n~ ~', " ~ ~\n~ ' ~\n ~ ~"]
 const DOUBLE_TAP_MS = 350 // two taps this close together (in time)...
 const DOUBLE_TAP_PX = 40 // ...and in space make the first crack
 const RAPID_TAP_MS = 600 // once cracked, each tap this soon after the last adds a crack
-const CRACKS_TO_SHATTER = 8
+const CRACKS_TO_SHATTER = 5
 const CAPTION = "don't tap the glass!"
 const PERSONAL_SPACE = 0.6 // fish keep about this many (summed) widths apart
 const SEPARATION_SPEED = 160 // px/s of push away from a fish that is too close
@@ -688,14 +688,14 @@ export function FishTank() {
     }
 
     // Tapping the glass: a quick double-tap makes the first crack. After that, every
-    // quick follow-up tap adds another; with eight cracks the tank shatters. Slow,
+    // quick follow-up tap adds another; with five cracks the tank shatters. Slow,
     // single clicks just drop food.
     const now = performance.now()
     const addCrack = (x: number, y: number) => {
       if (crackCount.current >= CRACKS_TO_SHATTER) return // already about to shatter
       crackCount.current++
       setCracks((c) => [...c, makeCrack(x, y)])
-      // Show the eighth crack for a beat, then the glass gives way.
+      // Show the last crack for a beat, then the glass gives way.
       if (crackCount.current === CRACKS_TO_SHATTER) window.setTimeout(shatter, 300)
     }
     if (crackCount.current === 0) {
@@ -856,7 +856,7 @@ export function FishTank() {
           </pre>
         </div>
       ) : (
-        <img key={i} ref={setRef} src={FISH_SRC} alt="" draggable={false} className={className} style={style} />
+        <img key={i} ref={setRef} src={FISH_SRC} alt="A betta fish from my painting" draggable={false} className={className} style={style} />
       )
     })
 

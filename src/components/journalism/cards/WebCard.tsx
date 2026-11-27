@@ -29,7 +29,7 @@ export function WebCard({ onClose }: { onClose: () => void }) {
           reported for and created accompanied a short blurb, including soundbites from our interviews and
           visualizations of my descriptions.
         </JP>
-        <JImage src="/journalism/web-image-20.png" className="w-full" />
+        <JImage src="/journalism/web-image-20.png" alt="The website’s stories page, featuring a video of students questioning NASA astronaut Christina Koch." className="w-full" />
         <JP>
           Web also allows me to cover more newsy topics. Important stories about elections and school renovation
           concerns, or opinions about Hurricane Helene and the N.C. budget may not have been timely enough by the
@@ -60,12 +60,12 @@ export function WebCard({ onClose }: { onClose: () => void }) {
           content relating to our school. We were successful; gaining over 460 followers and setting records of
           views and likes on posts. Here are three of my most-viewed posts:
         </JP>
-        <JImage src="/journalism/web-image-21.png" className="w-full" />
+        <JImage src="/journalism/web-image-21.png" alt="Instagram insights for several Stentorian posts." className="w-full" />
         <JP>
           This is a gallery of photographs I sent our editorial board's photographers to capture, published in the
           same weekend.
         </JP>
-        <JImage src="/journalism/web-image-22.png" className="w-full" />
+        <JImage src="/journalism/web-image-22.png" alt="The Instagram post “In Photos: Fall Sports Begin” and its insights, with 2,890 views." className="w-full" />
       </JSection>
     </JournalismModalShell>
   )

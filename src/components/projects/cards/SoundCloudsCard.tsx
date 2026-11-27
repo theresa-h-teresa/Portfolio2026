@@ -10,23 +10,23 @@ const tools = ['Figma', 'TouchDesigner', 'Unity 2D/3D', 'LoopMidi', 'Ableton', '
 const development = ['Python', 'JavaScript', 'HTML/CSS', 'C/C#']
 
 const dir = '/Sound Clouds'
-const uxImages = [
-  `${dir}/SoundClouds_UX Brainstorm Organization_A1.png`,
-  `${dir}/SoundClouds_UX Brainstorm Organization_A2.png`,
-  `${dir}/SoundClouds_UX Brainstorm Organization_A3.png`,
-  `${dir}/SoundClouds_UX Brainstorm Organization_A4.png`,
+const uxImages: CaseImage[] = [
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A1.png`, alt: "Brainstorm board collecting precedent images of immersive art installations." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A2.png`, alt: "Sticky-note affinity map organizing interaction ideas for Sound Clouds." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A3.png`, alt: "Whiteboard of sketched interaction concepts for the installation." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A4.png`, alt: "Storyboard of two interaction modes showing how participants affect the suspended spheres." },
 ]
-const computerVisionImages = [
-  `${dir}/SoundClouds_ComputerVision_B1.png`,
-  `${dir}/SoundClouds_ComputerVision_B2.png`,
-  `${dir}/SoundClouds_ComputerVision_B3.png`,
-  `${dir}/SoundClouds_ComputerVision_B4.png`,
+const computerVisionImages: CaseImage[] = [
+  { src: `${dir}/SoundClouds_ComputerVision_B1.png`, alt: "TouchDesigner network processing a fisheye camera feed of the installation." },
+  { src: `${dir}/SoundClouds_ComputerVision_B2.png`, alt: "TouchDesigner blob tracking detecting a blue light with 0.76 confidence." },
+  { src: `${dir}/SoundClouds_ComputerVision_B3.png`, alt: "Overhead fisheye view with colored lights detected and labeled by the tracking model." },
+  { src: `${dir}/SoundClouds_ComputerVision_B4.png`, alt: "TouchDesigner network running person detection on a video feed." },
 ]
-const authoringToolImages = [
-  `${dir}/SoundClouds_AuthoringTool_C1.png`,
-  `${dir}/SoundClouds_AuthoringTool_C2.png`,
-  `${dir}/SoundClouds_AuthoringTool_C3.png`,
-  `${dir}/SoundClouds_AuthoringTool_C4.png`,
+const authoringToolImages: CaseImage[] = [
+  { src: `${dir}/SoundClouds_AuthoringTool_C1.png`, alt: "Diagram of version 2 of the interaction, with distance-modulated sound on a beat grid." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C2.png`, alt: "Unity 3D simulation of colored spheres connected to a central node." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C3.png`, alt: "TouchDesigner node network for the authoring tool." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C4.png`, alt: "Code editor beside a 2D simulation grid of nodes for the authoring tool." },
 ]
 
 function VideoPlayer({ src }: { src: string }) {
@@ -133,15 +133,14 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           onImageClick={setLightboxImage}
         >
           <p className="font-display text-base leading-snug text-ink">
-            As part of a early-concept project for the Expressive Machinery Lab at Georgia Tech, I had the
-            opportunity to contribute to the development of an authoring platform for "Sound Clouds," now known as
-            "ARRAY." As public art installation, ARRAY is also an ambient intelligence system designed to elicit
-            deep human experience of awe, wonder, and beauty.
+            An early-concept project for the Expressive Machinery Lab at Georgia Tech, where I had the opportunity
+            to contribute to the development of an authoring platform for "Sound Clouds," now known as "ARRAY." A
+            public art installation, ARRAY is also an ambient intelligence system designed to elicit a deep human
+            experience of awe, wonder, and beauty.
           </p>
           <p className="font-display text-base leading-snug text-ink">
-            My role in this project was to translate these evaluations through designing and storyboarding
-            interactions, offering a fluid and comprehensive plan of action for our team's engineers and
-            programmers. This was my first college research project, so I mainly learned from my upperclassmen
+            My role in this project was to translate those goals into interactions by designing and storyboarding
+            them, offering a fluid and comprehensive plan of action for our team's engineers and programmers. This was my first college research project, so I mainly learned from my upperclassmen
             colleagues about HCI and UX research processes, like storyboarding, user testing, and developing shared
             vocabulary for our cross-disciplinary team.
           </p>
@@ -154,8 +153,8 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           onImageClick={setLightboxImage}
         >
           <p className="font-display text-base leading-snug text-ink">
-            To develop the human-computer interactive pipeline, I worked with the engineering team to the computer
-            vision system to track participant movement. My role was to increase the blob-detection and spatial
+            To develop the human-computer interactive pipeline, I worked with the engineering team to build the
+            computer vision system that tracks participant movement. My role was to increase the blob-detection and spatial
             tracking integrity on TouchDesigner. This work required balancing accuracy, responsiveness, and
             robustness while designing interactions that felt realistic, intuitive, and engaging for participants.
           </p>

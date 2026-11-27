@@ -1,6 +1,6 @@
 export const sections = [
   { id: 'about', label: 'About' },
-  { id: 'projects', label: 'UI/UX & Engineering Projects' },
+  { id: 'projects', label: 'Product & Design Projects' },
   { id: 'journalism', label: 'Journalism' },
 ] as const
 
@@ -48,7 +48,7 @@ export const experience: ExperienceItem[] = [
   {
     role: 'Product Designer & Product Manager',
     org: 'Curio — The Garage at Northwestern, Jumpstart Program',
-    date: 'Nov 2026 — Present',
+    date: 'Sep 2026 — Present',
     description:
       'Building Curio with founder Cassie Song as part of The Garage’s Jumpstart Program. Lead product design and release planning for Curio, a pocket companion for art museum visits — a website and upcoming iOS app where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Own the design system (colors, type, spacing, components), onboarding, App Store listing art, and design QA on TestFlight betas for the React Native iOS app now in development, and run a milestone plan that keeps every design delivery a week ahead of its build — from the 1.0 App Store launch through a 1.1 social layer with the privacy and safety flows (report, block, public/private visits) App Store review requires.',
     skills: ['Product Design', 'Product Management', 'Figma', 'Design Systems', 'Release Planning', 'React Native', 'App Store Launch'],
@@ -159,6 +159,31 @@ export interface ProjectItem {
 
 export const projects: ProjectItem[] = [
   {
+    title: 'Curio',
+    role: 'Product Designer & Product Manager | The Garage at Northwestern, Jumpstart Program',
+    description:
+      'A pocket companion for art museum visits: a website and iOS app (in development) where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Lead design and release planning for the React Native app, from the 1.0 App Store launch to a 1.1 social layer, owning the design system, onboarding, App Store listing art, and TestFlight design QA, with every design delivery landing a week ahead of its build.',
+    skills: ['Product Design', 'Design Systems', 'Release Planning', 'Figma'],
+    thumbnail: '/Curio/curio-thumb.jpg',
+    href: 'https://curioreceipt.com/',
+  },
+  {
+    title: 'GeoBind Cement',
+    role: 'Product Manager | Georgia Tech Grand Challenges',
+    description:
+      'Product manager for a five-person engineering team proposing to turn lead-contaminated West Atlanta soil into on-site construction material. Led discovery with 24 stakeholders and 11 interviews, steered the pivot from phytoremediation to soil–cement, framed our feasibility tests around the riskiest assumptions, and built the commercialization roadmap; won the Investor’s Award and Innovation Award.',
+    skills: ['Product Discovery', 'Stakeholder Interviews', 'Experiment Design', 'Roadmapping'],
+    thumbnail: '/geobind-case/thumb.jpg',
+  },
+  {
+    title: 'Franky',
+    role: 'Founder & Product Lead | Independent Product Venture',
+    description:
+      'A physical-digital focus companion that turns everyday tasks into quests for middle school students with ADHD. Led the product from early discovery through MVP, interviewing 8 students, developing 3 personas, and testing 2 product concepts. Drove 0→1 discovery to define MVP requirements and a product roadmap across physical and digital touchpoints, then built two functional prototypes.',
+    skills: ['Product Discovery', 'User Research', 'Prototyping', '0→1'],
+    thumbnail: '/Thumbnail_Franky.png',
+  },
+  {
     title: 'Sound Clouds / ARRAY',
     role: 'Research Assistant | Undergraduate Research at Expressive Machinery Lab',
     description:
@@ -177,23 +202,6 @@ export const projects: ProjectItem[] = [
     href: 'https://www.figma.com/proto/cSLYSMh1VsXet38Mfj7f6I/CS3751-prototype---poster--Copy-?node-id=361-554&t=KC0w8Rndq1vCYgGZ-1&scaling=scale-down&content-scaling=fixed&page-id=361%3A553&starting-point-node-id=366%3A981',
   },
   {
-    title: 'Franky',
-    role: 'Founder & Product Lead | Independent Product Venture',
-    description:
-      'A physical-digital focus companion that turns everyday tasks into quests for middle school students with ADHD. Led the product from early discovery through MVP, interviewing 8 students, developing 3 personas, and testing 2 product concepts. Drove 0→1 discovery to define MVP requirements and a product roadmap across physical and digital touchpoints. Prototype coming soon.',
-    skills: ['Product Discovery', 'User Research', 'Prototyping', '0→1'],
-    thumbnail: '/Thumbnail_Franky.png',
-  },
-  {
-    title: 'Curio',
-    role: 'Product Designer & Product Manager | The Garage at Northwestern, Jumpstart Program',
-    description:
-      'A pocket companion for art museum visits: a website and iOS app (in development) where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Lead design and release planning for the React Native app, from the 1.0 App Store launch to a 1.1 social layer, owning the design system, onboarding, App Store listing art, and TestFlight design QA, with every design delivery landing a week ahead of its build.',
-    skills: ['Product Design', 'Design Systems', 'Release Planning', 'Figma'],
-    thumbnail: '/Curio/curio-thumb.jpg',
-    href: 'https://curioreceipt.com/',
-  },
-  {
     title: 'Singapore Changi Airport',
     role: 'Brand & Digital Experience Redesign | Visual Design Course Project',
     description:
@@ -205,8 +213,8 @@ export const projects: ProjectItem[] = [
     title: 'teresafang.net',
     role: 'Designer & Developer | Personal Portfolio',
     description:
-      'This website: designed from a playful “desktop of windows” concept and built with React, TypeScript, Vite, and Tailwind CSS, with case-study cards, an image lightbox, and a journalism portfolio. Deployed to GitHub Pages with GitHub Actions.',
-    skills: ['React', 'TypeScript', 'Tailwind CSS', 'UI Design'],
+      'This website: designed from a playful “desktop of windows” concept and built with React, TypeScript, Vite, and Tailwind CSS. Features an interactive fish tank of the bettas from my painting (feed them, startle them, or crack the glass to set them loose), case-study cards with an image lightbox, a journalism portfolio, and a layout that adapts from desktop to phone. Deployed to GitHub Pages with GitHub Actions.',
+    skills: ['React', 'TypeScript', 'Tailwind CSS', 'UI Design', 'Interaction Design'],
     thumbnail: '/portfolio-case/concept-title-card.jpg',
     href: 'https://teresafang.net/',
   },

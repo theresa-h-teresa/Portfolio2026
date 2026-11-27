@@ -8,8 +8,8 @@ export function DiversityCard({ onClose }: { onClose: () => void }) {
       onClose={onClose}
       leftExtra={
         <div className="flex flex-col gap-4">
-          <JImage src="/journalism/diversity-image-28.png" className="w-full" />
-          <JImage src="/journalism/diversity-image-29.png" className="w-full" />
+          <JImage src="/journalism/diversity-image-28.png" alt="Photos from reporting on community events, including an interview and a painted mural." className="w-full" />
+          <JImage src="/journalism/diversity-image-29.png" alt="Interviewing Scholastic Kids Reporter Max Chen, and Nobel laureate Dr. Robert Lefkowitz at his Duke lab." className="w-full" />
         </div>
       }
     >

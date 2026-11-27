@@ -41,7 +41,7 @@ export function DesignCard({ onClose }: { onClose: () => void }) {
           published article has drawn renewed interest in the school's events and in joining The Stentorian's
           masthead among the juniors.
         </JP>
-        <JImage src="/journalism/design-image-14.png" className="w-full" />
+        <JImage src="/journalism/design-image-14.png" alt="The Stentorian website homepage next to one of its article pages." className="w-full" />
         <JP>
           The virtual format allows the Stentorian to incorporate more photographs, videos, and charts in our
           articles (as we had never had color in our newspaper, save for one issue in 2013). For example, in my{' '}
@@ -54,7 +54,7 @@ export function DesignCard({ onClose }: { onClose: () => void }) {
           410 views on the website, 142 likes on Instagram, and printed and distributed on all 1000 copies of that
           month's issue.
         </JP>
-        <JImage src="/journalism/design-image-15.png" className="w-full" />
+        <JImage src="/journalism/design-image-15.png" alt="Tables of college acceptance data from the article about the Class of 2024." className="w-full" />
         <JP>
           The website also allows us to cover more timely topics on the news. Important stories about graduation, or
           latest budget cuts to different departments in school may not have been timely enough by the time we
@@ -83,9 +83,9 @@ export function DesignCard({ onClose }: { onClose: () => void }) {
           In the cases where stories do not have appropriate or available photographs to use as the feature image, I
           illustrate or graphic design digital feature images to use instead:
         </JP>
-        <JImage src="/journalism/design-image-16.png" className="w-full" />
+        <JImage src="/journalism/design-image-16.png" alt="A row of colorful cover graphics designed for Stentorian stories." className="w-full" />
         <JP>And here are six of some most-recent posts I made in my senior year now:</JP>
-        <JImage src="/journalism/design-image-17.png" className="w-full" />
+        <JImage src="/journalism/design-image-17.png" alt="Featured photo tiles from The Stentorian website." className="w-full" />
         <JP>
           These series of posts show that my design style always leans towards a more chic, minimalistic vibe with
           words and photos. If there is a photo provided to me by the writers or our editorial board's designated
@@ -98,9 +98,9 @@ export function DesignCard({ onClose }: { onClose: () => void }) {
       </JSection>
 
       <JSection id="editorial-design" heading="Editorial Design">
-        <JImage src="/journalism/design-image-18.png" className="w-full" />
+        <JImage src="/journalism/design-image-18.png" alt="Printed Stentorian pages, and those pages being laid out in Adobe InDesign." className="w-full" />
         <JP>Here are some examples of the ads I designed for our business sponsors:</JP>
-        <JImage src="/journalism/design-image-19.png" className="w-full" />
+        <JImage src="/journalism/design-image-19.png" alt="Sponsor ads designed for the newspaper, including a restaurant ad and a tote bag sale." className="w-full" />
       </JSection>
     </JournalismModalShell>
   )
