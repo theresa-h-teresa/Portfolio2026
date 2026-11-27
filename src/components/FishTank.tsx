@@ -52,6 +52,9 @@ const WANDER_SPEED = 38 // px/s
 const CHASE_SPEED = 230 // fish dart for food much faster than they wander
 const FOOD_SINK = 12 // px/s
 const FOOD_LIFE = 12_000 // ms before uneaten food dissolves
+const WANDER_LEG: [number, number] = [4000, 9000] // ms a fish heads for one wander target before picking another
+const STALL_SPEED = 12 // px/s; slower than this counts as stalled...
+const STALL_MS = 700 // ...and stalled this long means it picks somewhere new to swim
 const FOOD_SPACING = 16 // px between pellets when dragging
 // Turning: only turn around after clearly swimming the other way for a moment, and not
 // again right away, so small back-and-forth nudges don't make fish flip constantly.
@@ -101,6 +104,8 @@ interface Fish {
   fleeY: number
   tx: number // wander target
   ty: number
+  wanderUntil: number // picks a new wander target by this time (ms), even if it isn't there yet
+  stalledFor: number // ms it has been barely moving (e.g. pressed against the glass)
   phase: number
   ascii: boolean // drawn as the ASCII betta instead of the painting
   onlyFree: boolean // hidden inside the tank; joins in once it breaks
@@ -200,6 +205,8 @@ function pickTarget(f: Fish, world: Bounds, view: { w: number; h: number }, othe
   }
   f.tx = best.x
   f.ty = best.y
+  f.wanderUntil = performance.now() + rand(...WANDER_LEG)
+  f.stalledFor = 0
 }
 
 /** A push away from every fish that is inside this one's personal space. */
@@ -378,6 +385,8 @@ export function FishTank() {
       fleeY: 0,
       tx: 0,
       ty: 0,
+      wanderUntil: 0,
+      stalledFor: 0,
       phase: rand(0, Math.PI * 2),
       ascii,
       onlyFree,
@@ -429,25 +438,37 @@ export function FishTank() {
         let speed = WANDER_SPEED
         if (pellets.length && !fleeing) {
           const m = mouthOf(f)
+          const reach = Math.max(9, f.width * 0.1)
           let best = Infinity
           for (const p of pellets) {
+            // Where the centre has to be to bring the mouth (not the centre) to the pellet.
+            const cx = p.x - (m.x - f.x)
+            const cy = p.y - (m.y - f.y)
+            // Skip food it can't reach (sunk past the floor, or tucked in a corner), so it
+            // doesn't sit pressed against the glass waiting for it to dissolve.
+            if (Math.hypot(clamp(cx, bounds.minX, bounds.maxX) - cx, clamp(cy, bounds.minY, bounds.maxY) - cy) > reach) continue
             const dist = Math.hypot(p.x - m.x, p.y - m.y)
             if (dist < best) {
               best = dist
-              target = { x: p.x - (m.x - f.x), y: p.y - (m.y - f.y) } // bring the mouth, not the centre, to it
+              target = { x: cx, y: cy }
             }
           }
-          speed = CHASE_SPEED
+          if (target) speed = CHASE_SPEED
         }
         if (!target) {
-          if (Math.hypot(f.tx - f.x, f.ty - f.y) < 30) pickTarget(f, bounds, view, active)
+          // Head for the wander target; pick a new one on arrival, when this leg runs long,
+          // or when it has stalled (so it never just parks at the bottom or an edge).
+          if (Math.hypot(f.tx - f.x, f.ty - f.y) < 30 || now > f.wanderUntil || f.stalledFor > STALL_MS) {
+            pickTarget(f, bounds, view, active)
+          }
           target = { x: f.tx, y: f.ty }
         }
+        const chasing = speed === CHASE_SPEED
         const dx = target.x - f.x
         const dy = target.y - f.y
         const dist = Math.hypot(dx, dy) || 1
         const want = Math.min(speed, dist * 2.5)
-        const steer = Math.min(1, dt * (pellets.length ? 4 : 1.1))
+        const steer = Math.min(1, dt * (chasing ? 4 : 1.1))
         // Keep some distance from the other fish (gentler when racing for food).
         if (fleeing) {
           // Startled: dart off in the chosen direction, ignoring food and the others.
@@ -456,18 +477,23 @@ export function FishTank() {
           f.vy += (f.fleeY * FLEE_SPEED - f.vy) * kick
         } else {
           const sep = separation(f, active)
-          const sepSpeed = SEPARATION_SPEED * (pellets.length ? 0.5 : 1)
+          const sepSpeed = SEPARATION_SPEED * (chasing ? 0.5 : 1)
           f.vx += ((dx / dist) * want + sep.x * sepSpeed - f.vx) * steer
           f.vy += ((dy / dist) * want * 0.75 + sep.y * sepSpeed - f.vy) * steer
         }
+        const px = f.x
+        const py = f.y
         f.x = clamp(f.x + f.vx * dt, bounds.minX, bounds.maxX)
         f.y = clamp(f.y + f.vy * dt, bounds.minY, bounds.maxY)
+        // Track how long it has barely moved (its real movement, after the glass stops it).
+        const moved = dt > 0 ? Math.hypot(f.x - px, f.y - py) / dt : WANDER_SPEED
+        f.stalledFor = !fleeing && moved < STALL_SPEED ? f.stalledFor + dt * 1000 : 0
 
         // Turn to face the way it's swimming, squashing through 0 like a real turn.
         const wantFace = fleeing ? f.facing : f.vx < -TURN_SPEED ? 1 : f.vx > TURN_SPEED ? -1 : f.facing
         if (wantFace !== f.facing) {
           f.turnHold += dt
-          const hungry = pellets.length > 0
+          const hungry = chasing
           if (f.turnHold >= (hungry ? 0.12 : TURN_HOLD) && now - f.lastTurn >= (hungry ? 450 : TURN_GAP)) {
             f.facing = wantFace
             f.lastTurn = now
