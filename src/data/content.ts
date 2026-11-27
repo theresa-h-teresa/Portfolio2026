@@ -174,7 +174,7 @@ export const projects: ProjectItem[] = [
     description:
       'Product manager for a five-person engineering team proposing to turn lead-contaminated West Atlanta soil into on-site construction material. Led discovery with 24 stakeholders and 11 interviews, steered the pivot from phytoremediation to soil–cement, framed our feasibility tests around the riskiest assumptions, and built the commercialization roadmap; won the Investor’s Award and Innovation Award.',
     skills: ['Product Discovery', 'Stakeholder Interviews', 'Experiment Design', 'Roadmapping'],
-    thumbnail: '/geobind-case/thumb.jpg',
+    thumbnail: '/geobind-case/poster-thumb.jpg',
   },
   {
     title: 'Franky',
@@ -190,7 +190,7 @@ export const projects: ProjectItem[] = [
     description:
       'A no-code authoring platform for creating interactive audiovisual experiences through movement and spatial interaction. Worked across product, UX, and engineering to prototype computer-vision interactions and build 2D/3D simulation tools for rapid experimentation.',
     skills: ['HCI', 'Computer Vision', 'Interaction Design', 'Prototyping'],
-    thumbnail: '/Thumbnail_Array.png',
+    thumbnail: '/Sound Clouds/sc-thumb.jpg',
     href: 'https://github.gatech.edu/Expressive-Machinery-Lab/ResonantSpaces_AuthoringTool',
   },
   {
@@ -208,7 +208,7 @@ export const projects: ProjectItem[] = [
     description:
       'Reframed the airport’s website as civic infrastructure, taking it from wireframes to 20+ high-fidelity pages with a visual identity system, brand guidelines, typography, and information architecture. Built a reusable Figma component library (nav bar, cards, buttons) with variants to keep all pages consistent.',
     skills: ['Visual Identity', 'Information Architecture', 'Figma Components', 'Wireframing'],
-    thumbnail: '/changi-case/proto-home-thumb.jpg',
+    thumbnail: '/changi-case/prism-thumb.jpg',
   },
   {
     title: 'teresafang.net',
