@@ -19,6 +19,14 @@ const garageHref = 'https://www.thegarage.northwestern.edu/'
 const tools = ['Figma', 'React Native', 'TestFlight']
 const features = ['Snap', 'Log', 'Share Receipt']
 
+const myRole = [
+  'Plan the release roadmap, from the 1.0 App Store launch to a follow-up release with social features',
+  'Build and maintain the design system in Figma',
+  'Design the onboarding flow and App Store listing assets',
+  'Run design QA on TestFlight builds before release',
+  'Deliver every design a week ahead of its build, so development never waits on design',
+]
+
 const conceptImages: CaseImageInput[] = [
   { src: '/Curio/curio-landing.jpg', caption: 'curioreceipt.com: “Say hello to curio.”' },
   { placeholder: 'Receipt / share image', caption: 'A visit printed as a shareable receipt.' },
@@ -39,17 +47,11 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
             and share the visit as a printed-style receipt. The website is live, and the iOS app is in development.
           </p>
           <p className={`mt-3 ${body}`}>
-            I’m the product designer and product manager, leading the design system and release planning for the app.
-            We’re building it as part of{' '}
-            <a
-              href={garageHref}
-              target="_blank"
-              rel="noreferrer"
-              className="text-accent"
-            >
-              The Garage at Northwestern
+            I’m the product manager and product designer on Curio’s two-person team, building it at{' '}
+            <a href={garageHref} target="_blank" rel="noreferrer" className="text-accent">
+              The Garage
             </a>
-            .
+            , Northwestern’s startup incubator.
           </p>
           <div className="mt-3">
             <CaseLink href={siteHref}>Visit curioreceipt.com</CaseLink>
@@ -67,16 +69,24 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
         <p className="text-sm">SEP 2026-PRESENT</p>
       </div>
 
+      <section id="curio-role" className="scroll-mt-4">
+        <h3 className="mb-3 font-display text-xl font-normal text-accent">My Role</h3>
+        <ul className={`m-0 flex list-disc flex-col gap-1.5 pl-5 ${body}`}>
+          {myRole.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
+
       <CaseStudySection
         id="curio-concept"
         heading="Snap, Log, Share"
-        divider={false}
         images={conceptImages}
         onImageClick={setLightboxImage}
       >
         <p className={body}>“Show me what stopped you. I’ll print the memory.”</p>
         <p className={body}>
-          The iOS app is on its way to the App Store. More of the design process will be here once it launches.
+          The iOS app is on its way to the App Store. I’ll add the full design process here after launch.
         </p>
       </CaseStudySection>
     </JournalismModalShell>

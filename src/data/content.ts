@@ -161,9 +161,9 @@ export interface ProjectItem {
 export const projects: ProjectItem[] = [
   {
     title: 'Curio',
-    role: 'Product Designer & Product Manager | The Garage at Northwestern',
+    role: 'Product Manager & Product Designer | The Garage at Northwestern',
     description:
-      'A pocket companion for art museum visits: a website and iOS app (in development) where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Lead design and release planning for the React Native app, from the 1.0 App Store launch to a 1.1 social layer, owning the design system, onboarding, App Store listing art, and TestFlight design QA, with every design delivery landing a week ahead of its build.',
+      'A pocket companion for art museum visits: a website and iOS app (in development) where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. On a two-person team, I lead product, design, and release planning for the React Native app, from the 1.0 App Store launch to a follow-up social release, owning the design system, onboarding, App Store listing assets, and TestFlight design QA, with every design delivery landing a week ahead of its build.',
     skills: ['Product Design', 'Design Systems', 'Release Planning', 'Figma'],
     thumbnail: '/Curio/curio-thumb.jpg',
     href: 'https://curioreceipt.com/',
