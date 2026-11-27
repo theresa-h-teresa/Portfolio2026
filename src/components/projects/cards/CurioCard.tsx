@@ -39,8 +39,8 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
             and share the visit as a printed-style receipt. The website is live, and the iOS app is in development.
           </p>
           <p className={`mt-3 ${body}`}>
-            Curio was founded by Cassie Song, and I joined her as product designer and product manager, leading the
-            design system and release planning for the app. We’re building it as part of{' '}
+            I’m the product designer and product manager, leading the design system and release planning for the app.
+            We’re building it as part of{' '}
             <a
               href={garageHref}
               target="_blank"
