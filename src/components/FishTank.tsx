@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { createPortal } from 'react-dom'
+import { ArrowUp } from 'lucide-react'
 import { withBase } from '../lib/url'
 import { setTankBroken } from '../lib/tankStore'
 import { BETTA } from '../data/bettaSprite'
@@ -971,6 +972,21 @@ export function FishTank() {
           credit on the same line at the right. On narrow screens the credit wraps but stays right. */}
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-mono text-xs text-ink/60 select-none">
         <p aria-label={CAPTION} className="m-0">
+          {/* A little arrow that "double-taps" up at the tank, rests, and taps again. It
+              falls with the letters when the glass shatters. */}
+          <span
+            aria-hidden="true"
+            className={`mr-1.5 inline-block align-[-1px] ${freed ? 'tank-letter-fall' : ''}`}
+            style={
+              freed
+                ? ({ '--dx': '-24px', '--rot': '-160deg', animationDelay: '0.05s' } as React.CSSProperties)
+                : undefined
+            }
+          >
+            <span className={`inline-block ${freed ? '' : 'tank-tap-arrow'}`}>
+              <ArrowUp className="h-3 w-3" strokeWidth={2.5} />
+            </span>
+          </span>
           {[...CAPTION].map((ch, i) => (
             <span
               key={i}
@@ -990,7 +1006,7 @@ export function FishTank() {
             </span>
           ))}
         </p>
-        <p className="m-0 ml-auto">{CREDIT}</p>
+        <p className="m-0 ml-auto text-[10px] italic">{CREDIT}</p>
       </div>
 
       {/* Freed fish (painted and ASCII) roam over the whole page, with their food. */}

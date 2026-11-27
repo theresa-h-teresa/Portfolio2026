@@ -157,6 +157,49 @@ body {
   }
 }
 
+/* The arrow before the caption taps up at the tank twice, quickly, then floats in line
+   with the text before tapping again. */
+.tank-tap-arrow {
+  animation: tank-tap-arrow 2.6s infinite;
+}
+
+@keyframes tank-tap-arrow {
+  0% {
+    transform: none;
+    animation-timing-function: ease-out;
+  }
+  6% {
+    transform: translateY(-5px);
+    animation-timing-function: ease-in;
+  }
+  12% {
+    transform: none;
+    animation-timing-function: ease-out;
+  }
+  18% {
+    transform: translateY(-5px);
+    animation-timing-function: ease-in;
+  }
+  24% {
+    transform: none;
+    animation-timing-function: ease-in-out;
+  }
+  55% {
+    transform: translateY(-1.5px);
+    animation-timing-function: ease-in-out;
+  }
+  85%,
+  100% {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tank-tap-arrow {
+    animation: none;
+  }
+}
+
 /* ...and so do the letters of the "keep double tapping the glass!" caption. */
 .tank-letter-fall {
   animation: tank-letter-fall 1.5s cubic-bezier(0.45, 0, 0.8, 0.6) both;
