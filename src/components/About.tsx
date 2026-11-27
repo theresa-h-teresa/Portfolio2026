@@ -41,8 +41,8 @@ export function About() {
         decision-making.
       </p>
       <p className="mb-4">
-        I’m currently studying Journalism with a second major in Economics and a minor in Computer Science at
-        Northwestern University’s Medill School of Journalism, after beginning my undergraduate studies in Computational Media at Georgia Tech.
+        I’m currently triple-majoring in Computer Science, Economics, and Journalism at Northwestern University,
+        after beginning my undergraduate studies in Computational Media at Georgia Tech.
       </p>
       <p>
         In my spare time, you can usually find me{' '}
