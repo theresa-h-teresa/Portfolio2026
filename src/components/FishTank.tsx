@@ -8,12 +8,12 @@ import { BETTA } from '../data/bettaSprite'
 //
 // - Before it breaks, the tank holds just three painted bettas, kept fully inside the
 //   frame. They wander, turn, and keep some distance from each other.
-// - A "don't tap the glass!" caption sits under the tank; its letters fall when it breaks.
+// - A "keep double tapping the glass!" caption (and an art credit) sits under the tank; its letters fall when it breaks.
 // - Hovering shows an orange ring around the cursor. Clicking drops a pellet of food;
 //   click-and-drag lays a line of it. Fish swim to the nearest food and eat it, and
 //   uneaten food sinks and dissolves after a while.
 // - A quick double-tap cracks the glass; quick taps after that crack it further, and once
-//   it has five cracks it shatters: the shards fall, the
+//   it has three cracks it shatters: the shards fall, the
 //   water floods out across the page (turning the background blue), and the fish swim
 //   free over the whole screen, joined by three orange and three green ASCII ones (from the ASCII version of the painting) that only appear once the tank
 //   is broken. Fish keep some distance from each other instead of piling up. You can keep
@@ -78,8 +78,9 @@ const PUFF_FRAMES = ['~', ' ~\n~ ~', " ~ ~\n~ ' ~\n ~ ~"]
 const DOUBLE_TAP_MS = 350 // two taps this close together (in time)...
 const DOUBLE_TAP_PX = 40 // ...and in space make the first crack
 const RAPID_TAP_MS = 600 // once cracked, each tap this soon after the last adds a crack
-const CRACKS_TO_SHATTER = 5
-const CAPTION = "don't tap the glass!"
+const CRACKS_TO_SHATTER = 3
+const CAPTION = 'keep double tapping the glass!'
+const CREDIT = 'interactive and art by teresa'
 const PERSONAL_SPACE = 0.6 // fish keep about this many (summed) widths apart
 const SEPARATION_SPEED = 160 // px/s of push away from a fish that is too close
 
@@ -688,7 +689,7 @@ export function FishTank() {
     }
 
     // Tapping the glass: a quick double-tap makes the first crack. After that, every
-    // quick follow-up tap adds another; with five cracks the tank shatters. Slow,
+    // quick follow-up tap adds another; with three cracks the tank shatters. Slow,
     // single clicks just drop food.
     const now = performance.now()
     const addCrack = (x: number, y: number) => {
@@ -940,27 +941,31 @@ export function FishTank() {
         />
       </div>
 
-      {/* The warning under the tank. When the glass shatters, its letters fall too. */}
-      <p aria-label={CAPTION} className="mt-2 font-mono text-xs text-ink/60 select-none">
-        {[...CAPTION].map((ch, i) => (
-          <span
-            key={i}
-            aria-hidden="true"
-            className={`inline-block ${freed ? 'tank-letter-fall' : ''}`}
-            style={
-              freed
-                ? ({
-                    '--dx': `${letterFall.current[i].dx}px`,
-                    '--rot': `${letterFall.current[i].rot}deg`,
-                    animationDelay: `${letterFall.current[i].delay}s`,
-                  } as React.CSSProperties)
-                : undefined
-            }
-          >
-            {ch === ' ' ? <>&nbsp;</> : ch}
-          </span>
-        ))}
-      </p>
+      {/* The caption under the tank (its letters fall when the glass shatters), with the
+          credit on the same line at the right. On narrow screens the credit wraps but stays right. */}
+      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-mono text-xs text-ink/60 select-none">
+        <p aria-label={CAPTION} className="m-0">
+          {[...CAPTION].map((ch, i) => (
+            <span
+              key={i}
+              aria-hidden="true"
+              className={`inline-block ${freed ? 'tank-letter-fall' : ''}`}
+              style={
+                freed
+                  ? ({
+                      '--dx': `${letterFall.current[i].dx}px`,
+                      '--rot': `${letterFall.current[i].rot}deg`,
+                      animationDelay: `${letterFall.current[i].delay}s`,
+                    } as React.CSSProperties)
+                  : undefined
+              }
+            >
+              {ch === ' ' ? <>&nbsp;</> : ch}
+            </span>
+          ))}
+        </p>
+        <p className="m-0 ml-auto">{CREDIT}</p>
+      </div>
 
       {/* Freed fish (painted and ASCII) roam over the whole page, with their food. */}
       {freed &&

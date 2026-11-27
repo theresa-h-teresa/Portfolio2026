@@ -53,7 +53,7 @@ const tankImages: CaseImage[] = [
   },
   {
     src: `${dir}/tank-cracked.jpg`,
-    caption: 'Double-tap the glass to crack it. Keep tapping, and at five cracks it shatters.',
+    caption: 'Double-tap the glass to crack it. Keep tapping, and at three cracks it shatters.',
   },
   {
     src: `${dir}/tank-freed.jpg`,
@@ -151,7 +151,7 @@ export function PortfolioCard({ onClose }: { onClose: () => void }) {
             lets out a puff, and darts away.
           </p>
           <p className={body}>
-            Tap the glass and it cracks. Keep going, and at five cracks the tank shatters, the water floods out, and
+            Tap the glass and it cracks. Keep going, and at three cracks the tank shatters, the water floods out, and
             the fish (plus a few new ones) swim free across the whole page. You can keep feeding them anywhere, or refill the tank to start over.
           </p>
           <p className={body}>
