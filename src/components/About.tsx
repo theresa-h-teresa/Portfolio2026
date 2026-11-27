@@ -18,8 +18,8 @@ export function About() {
         Hi! I’m Teresa, a product builder and researcher studying Computer Science, Economics, and Journalism at
         Northwestern University. I’m currently a product manager and designer for{' '}
         <ExtLink href="https://curioreceipt.com/">Curio</ExtLink>, a museum-visit companion app we’re building through{' '}
-        <ExtLink href="https://www.thegarage.northwestern.edu/">The Garage at Northwestern</ExtLink>’s Jumpstart
-        Program. I lead the app’s design system and plan its initial iOS release.
+        <ExtLink href="https://www.thegarage.northwestern.edu/">The Garage at Northwestern</ExtLink>. I
+        lead the app’s design system and plan its initial iOS release.
       </p>
       <p className="mb-4">
         As a research assistant at Northwestern’s{' '}

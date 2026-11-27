@@ -49,7 +49,7 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
             >
               The Garage at Northwestern
             </a>
-            ’s Jumpstart Program.
+            .
           </p>
           <div className="mt-3">
             <CaseLink href={siteHref}>Visit curioreceipt.com</CaseLink>

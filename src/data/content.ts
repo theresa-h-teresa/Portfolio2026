@@ -47,10 +47,10 @@ export const experience: ExperienceItem[] = [
   },
   {
     role: 'Product Designer & Product Manager',
-    org: 'Curio — The Garage at Northwestern, Jumpstart Program',
+    org: 'Curio — The Garage at Northwestern',
     date: 'Sep 2026 — Present',
     description:
-      'Building Curio as part of The Garage’s Jumpstart Program. Lead product design and release planning for Curio, a pocket companion for art museum visits — a website and upcoming iOS app where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Own the design system (colors, type, spacing, components), onboarding, App Store listing art, and design QA on TestFlight betas for the React Native iOS app now in development, and run a milestone plan that keeps every design delivery a week ahead of its build — from the 1.0 App Store launch through a 1.1 social layer with the privacy and safety flows (report, block, public/private visits) App Store review requires.',
+      'Building Curio as part of The Garage at Northwestern. Lead product design and release planning for Curio, a pocket companion for art museum visits — a website and upcoming iOS app where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Own the design system (colors, type, spacing, components), onboarding, App Store listing art, and design QA on TestFlight betas for the React Native iOS app now in development, and run a milestone plan that keeps every design delivery a week ahead of its build — from the 1.0 App Store launch through a 1.1 social layer with the privacy and safety flows (report, block, public/private visits) App Store review requires.',
     skills: ['Product Design', 'Product Management', 'Figma', 'Design Systems', 'Release Planning', 'React Native', 'App Store Launch'],
     href: 'https://curioreceipt.com/',
   },
@@ -160,7 +160,7 @@ export interface ProjectItem {
 export const projects: ProjectItem[] = [
   {
     title: 'Curio',
-    role: 'Product Designer & Product Manager | The Garage at Northwestern, Jumpstart Program',
+    role: 'Product Designer & Product Manager | The Garage at Northwestern',
     description:
       'A pocket companion for art museum visits: a website and iOS app (in development) where visitors snap the artworks that stopped them, log them, and share the visit as a printed-style receipt. Lead design and release planning for the React Native app, from the 1.0 App Store launch to a 1.1 social layer, owning the design system, onboarding, App Store listing art, and TestFlight design QA, with every design delivery landing a week ahead of its build.',
     skills: ['Product Design', 'Design Systems', 'Release Planning', 'Figma'],
