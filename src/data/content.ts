@@ -180,9 +180,9 @@ export const projects: ProjectItem[] = [
     title: 'Franky',
     role: 'Founder & Product Lead | Independent Product Venture',
     description:
-      'A physical-digital focus companion that turns everyday tasks into quests for middle school students with ADHD. Led the product from early discovery through MVP, interviewing 8 students, developing 3 personas, and testing 2 product concepts. Drove 0→1 discovery to define MVP requirements and a product roadmap across physical and digital touchpoints, then built two functional prototypes.',
+      'A physical-digital focus companion that turns everyday tasks into quests for middle school students with ADHD. Led the product from early discovery through MVP, interviewing 8 students, developing 3 personas, and testing 2 product concepts. Drove 0→1 discovery to define MVP requirements and a product roadmap across physical and digital touchpoints, then built two functional prototypes: a clickable Figma prototype and a playable web app with a companion view for grown-ups.',
     skills: ['Product Discovery', 'User Research', 'Prototyping', '0→1'],
-    thumbnail: '/Thumbnail_Franky.png',
+    thumbnail: '/Franky/proto-home.jpg',
   },
   {
     title: 'Sound Clouds / ARRAY',

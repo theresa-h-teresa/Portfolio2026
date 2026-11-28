@@ -9,9 +9,8 @@ import {
   type CaseImageInput,
 } from './CaseStudyParts'
 
-// Curio is still in progress, so this card is intentionally short. The images are
-// labeled placeholders: drop files into public/Curio/ and replace
-// `{ placeholder: '…' }` with `{ src: '/Curio/<file>' }` (keeping the caption).
+// Curio is still in progress, so this card is intentionally short. To add a receipt image,
+// drop it into public/Curio/ and add `{ src: '/Curio/<file>', caption: '…' }` to conceptImages.
 
 const siteHref = 'https://curioreceipt.com/'
 const garageHref = 'https://www.thegarage.northwestern.edu/'
@@ -29,7 +28,6 @@ const myRole = [
 
 const conceptImages: CaseImageInput[] = [
   { src: '/Curio/curio-landing.jpg', caption: 'curioreceipt.com: “Say hello to curio.”' },
-  { placeholder: 'Receipt / share image', caption: 'A visit printed as a shareable receipt.' },
 ]
 
 const body = 'font-display text-base leading-snug text-ink'
@@ -82,6 +80,7 @@ export function CurioCard({ onClose }: { onClose: () => void }) {
         id="curio-concept"
         heading="Snap, Log, Share"
         images={conceptImages}
+        imageColumn
         onImageClick={setLightboxImage}
       >
         <p className={body}>“Show me what stopped you. I’ll print the memory.”</p>

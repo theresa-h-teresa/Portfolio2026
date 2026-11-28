@@ -11,22 +11,22 @@ const development = ['Python', 'JavaScript', 'HTML/CSS', 'C/C#']
 
 const dir = '/Sound Clouds'
 const uxImages: CaseImage[] = [
-  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A1.png`, alt: "Brainstorm board collecting precedent images of immersive art installations." },
-  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A2.png`, alt: "Sticky-note affinity map organizing interaction ideas for Sound Clouds." },
-  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A3.png`, alt: "Whiteboard of sketched interaction concepts for the installation." },
-  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A4.png`, alt: "Storyboard of two interaction modes showing how participants affect the suspended spheres." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A1.png`, caption: "Brainstorm board collecting precedent images of immersive art installations." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A2.png`, caption: "Sticky-note affinity map organizing interaction ideas for Sound Clouds." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A3.png`, caption: "Whiteboard of sketched interaction concepts for the installation." },
+  { src: `${dir}/SoundClouds_UX Brainstorm Organization_A4.png`, caption: "Storyboard of two interaction modes showing how participants affect the suspended spheres." },
 ]
 const computerVisionImages: CaseImage[] = [
-  { src: `${dir}/SoundClouds_ComputerVision_B1.png`, alt: "TouchDesigner network processing a fisheye camera feed of the installation." },
-  { src: `${dir}/SoundClouds_ComputerVision_B2.png`, alt: "TouchDesigner blob tracking detecting a blue light with 0.76 confidence." },
-  { src: `${dir}/SoundClouds_ComputerVision_B3.png`, alt: "Overhead fisheye view with colored lights detected and labeled by the tracking model." },
-  { src: `${dir}/SoundClouds_ComputerVision_B4.png`, alt: "TouchDesigner network running person detection on a video feed." },
+  { src: `${dir}/SoundClouds_ComputerVision_B1.png`, caption: "TouchDesigner network processing a fisheye camera feed of the installation." },
+  { src: `${dir}/SoundClouds_ComputerVision_B2.png`, caption: "TouchDesigner blob tracking detecting a blue light with 0.76 confidence." },
+  { src: `${dir}/SoundClouds_ComputerVision_B3.png`, caption: "Overhead fisheye view with colored lights detected and labeled by the tracking model." },
+  { src: `${dir}/SoundClouds_ComputerVision_B4.png`, caption: "TouchDesigner network running person detection on a video feed." },
 ]
 const authoringToolImages: CaseImage[] = [
-  { src: `${dir}/SoundClouds_AuthoringTool_C1.png`, alt: "Diagram of version 2 of the interaction, with distance-modulated sound on a beat grid." },
-  { src: `${dir}/SoundClouds_AuthoringTool_C2.png`, alt: "Unity 3D simulation of colored spheres connected to a central node." },
-  { src: `${dir}/SoundClouds_AuthoringTool_C3.png`, alt: "TouchDesigner node network for the authoring tool." },
-  { src: `${dir}/SoundClouds_AuthoringTool_C4.png`, alt: "Code editor beside a 2D simulation grid of nodes for the authoring tool." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C1.png`, caption: "Diagram of version 2 of the interaction, with distance-modulated sound on a beat grid." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C2.png`, caption: "Unity 3D simulation of colored spheres connected to a central node." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C3.png`, caption: "TouchDesigner node network for the authoring tool." },
+  { src: `${dir}/SoundClouds_AuthoringTool_C4.png`, caption: "Code editor beside a 2D simulation grid of nodes for the authoring tool." },
 ]
 
 function VideoPlayer({ src }: { src: string }) {
@@ -102,11 +102,11 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
           <div className="lg:max-w-sm">
             <p className="font-display text-base leading-snug text-ink">
               For my freshman year in college, I worked with the Expressive Machinery Lab at Georgia Tech as an
-              undergraduate assistant, doing UX design and frontend developing. In the following summer, my role was
-              exclusively backend developing.
+              undergraduate assistant, doing UX design and frontend development. The following summer, I focused
+              entirely on backend development.
             </p>
             <p className="mt-3 font-display text-base leading-snug text-ink">
-              Our goal this year was to develop an authoring tool for this installation which anybody, regardless of
+              Our goal this year was to develop an authoring tool for this installation that anyone, regardless of
               prior coding experience, could use and customize.
             </p>
             <div className="mt-3">
@@ -169,7 +169,7 @@ export function SoundCloudsCard({ onClose }: { onClose: () => void }) {
             <p className="font-display text-base leading-snug text-ink">
               To ensure accuracy and smooth workflow throughout this process, I cross-examined the code with the
               approved storyboard at each major commit and weekly meeting with colleagues. There was a lot of
-              troubleshooting needed, but by seeing problems in different angles and shifting mechanisms around in
+              troubleshooting needed, but by looking at problems from different angles and shifting mechanisms around in
               different programs, we were able to have three exhibition-ready interactions by the summer's end.
             </p>
           }
